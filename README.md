@@ -1,4 +1,4 @@
-# **Adaptive Authentication + IPFS**
+# **ADAPTIVE AUTHENTICATION & IPFS**
 
 Đồ án cho cuối kỳ Thiết kế phần mềm + Mã hóa ứng dụng
 
@@ -8,30 +8,27 @@
 - 21120027 : Nguyễn Lê Hải Sơn
 - 21120471 : Phan Gia Huy
 
-# Cách chạy repo:
+# Cấu trúc repo:
 
-## Install các thư viện cần thiết
+```
+|--node_modules (thư mục chứa các library được install vào) - không cần đụng vào
 
-- B1: Install node.js và npm ([Link to docs](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm))
+|--public (thư mực chứa các file css, javascript)
+    |
+    |__ css : chứa các file css
+    |__ img : chứa các hình ảnh sử dụng trong ứng dụng
+    |__ js  : chứa các file javascript
 
-    `npm install -g npm`
+|--src (thư mục chứa code về giao diện và xử lý của server)
+    |
+    |__ controllers : chứa các xử lý của server (tất cả xử lý)
+    |__ routes      : chứa các file dùng để điều hướng 
+                        - ứng với yêu cầu này thì gọi hàm nào của controller
+    |__ views       : chứa giao diện của web - sử dụng express handlebar template
+        |__ layouts     : file .hbs để hiển thị khung giao diện
+        |__ partials    : các file .hbs được dùng đi dùng lại nhiều lần
+|
+|--package-lock.json : tự sinh ra
+|--package.json : định nghĩa version của dependencies và các thông tin về ứng dụng 
+```
 
-- B2: Install các thư viện cần thiết:
-
-    `npm install axios form-data`
-
-## Thay đổi đường dẫn đến file muốn upload
-
-Đổi dòng 8 trong **index.js** : `const src = "Orig1708.png";` thành đường dẫn file muốn upload.
-
-## Chạy code để upload
-
-`node index.js`
-
-## Kiểm tra xem file đã có trên ipfs chưa:
-
-Vào link sau để xem:
-
- `https://peach-necessary-quail-650.mypinata.cloud/ipfs/QmXEKZkFjVxE8WUeaEFqwNTQxpWpy18bqLtk9H2jNTRdvM`
-
-Với **QmXEKZkFjVxE8WUeaEFqwNTQxpWpy18bqLtk9H2jNTRdvM** là hash (CID) của file vừa mới upload. Thay thế đường dẫn cho phù hợp.
