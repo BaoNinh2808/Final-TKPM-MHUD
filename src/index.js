@@ -11,6 +11,7 @@ const expressHbs = require('express-handlebars');
 // set static folder is public
 app.use(express.static(path.dirname(__dirname) + "/public"));
 
+console.log(path.dirname(__dirname) + "/public");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -58,6 +59,11 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render('register',{layout: false});
+});
+
+console.log(__dirname);
+app.get('/home', (req, res) => {
+    res.sendFile(__dirname + '/views/layouts/layout.html');
 });
 
 //404 page
