@@ -32,3 +32,17 @@
 |--package.json : định nghĩa version của dependencies và các thông tin về ứng dụng 
 ```
 
+# Các thư viện cần cài đặt:
+
+`npm install -s axios express express-handlebars form-data moment`
+
+Cài nào không cài được thì chạy riêng nó, bỏ `-s` đi (vd: `npm install axios`)
+
+# Cách chạy chương trình
+
+Chạy lệnh: `nodemon ./src/index` hoặc `node ./src/index.js`
+
+Vào đường dẫn: 
+- `http://localhost:3000\login` : xem trang login
+- `http://localhost:3000\register` : xem trang register
+- `http://localhost:3000\home` : xem trang dashboard
