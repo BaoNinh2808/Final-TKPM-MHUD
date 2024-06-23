@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Đăng nhập</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .centered-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30rem;
+            height: 24rem;
+        }
+
+        body {
+            background: rgb(9,9,121);
+            background: linear-gradient(214deg, rgba(9,9,121,1) 0%, rgba(3,1,54,1) 13%, rgba(2,0,36,1) 37%, rgba(3,2,52,1) 83%, rgba(9,9,121,1) 100%);
+            height: 100vh; /* Ensure full viewport height coverage */
+            margin: 0; /* Remove default margin */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <!-- place navbar here -->
+    </header>
+    <main>
+        <div class="card centered-card container py-3">
+            <h5 class="text-center mb-3"><strong>Login to your account</strong></h5>
+            
+            <form class="container ps-5 pe-5" id="loginForm">
+                <div class="mb-3">
+                    <label for="input-email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="input-email" name="email" placeholder="email@gmail.com" required>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <label for="input-password" class="form-label">Password</label>
+                        <span class="form-text" style="color: #1570EF; cursor: pointer;">Forgot?</span>
+                    </div>
+                    <input type="password" class="form-control" id="input-password" name="password" placeholder="Enter your password" required>
+                    <div id="issue-assign-error-1" class="text-danger fs-6" style="display: none;">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Password must have at least 8 characters</span>
+                    </div>
+                    <div id="issue-assign-error-2" class="text-danger fs-6" style="display: none;">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Email or password incorrect</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Login now</button>
+            </form>
+
+            <div class="text-center mt-3 mb-3">
+                <span>Don't have an account?</span>
+                <a href="/register" style="color: #1570EF; cursor: pointer;">Register now</a>
+            </div>
+        </div>
+
+    </main>
+    <footer>
+        <!-- place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Loading layer on submit button
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+            submitButton.disabled = true;
+
+            // Get form data
+            const formData = {
+                email: document.getElementById('input-email').value,
+                password: document.getElementById('input-password').value
+            };
+
+            try {
+                // Send POST request to server
+                const response = await fetch('http://localhost:3000/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                // Assuming data contains refreshToken
+                // Set refreshToken in cookie
+                document.cookie = `refreshToken=${data.refreshToken}; Secure; SameSite=None; Path=/`;
+
+                // Redirect user after successful login
+                window.location.href = '/dashboard';
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle errors (show error message to user, etc.)
+            }
+        });
+
+    </script>
+</body>
+</html>
