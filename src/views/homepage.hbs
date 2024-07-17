@@ -32,7 +32,7 @@
                 style="min-height: 60px; padding: 0; width: 100%;">
                 <div class="col-auto">
                     <a href="#home">
-                        <img class="logo" src="/img/app-icon.png" alt="logo"
+                        <img class="logo" src="/img/logo.png" alt="logo"
                             style="height: 40px; width: 40px; margin-left: 40px;" />
                     </a>
                 </div>
@@ -202,7 +202,7 @@
 
                                     <div class="status-container mt-4 row align-items-center">
                                         <div class="col status-line">
-                                            <img src="/img/status-line-2.png" alt="status-line" width="115" />
+                                            <img src="/img/status-line-1.png" alt="status-line" width="115" />
                                         </div>
                                         <div class="col status-line-description ps-0">
                                             <div class="align-end">
@@ -251,7 +251,7 @@
 
                                     <div class="status-container mt-4 row align-items-center">
                                         <div class="col status-line">
-                                            <img src="/img/status-line-3.png" alt="status-line" width="115" />
+                                            <img src="/img/status-line-1.png" alt="status-line" width="115" />
                                         </div>
                                         <div class="col status-line-description ps-0">
                                             <div class="align-end">
@@ -300,34 +300,49 @@
                                 </div>
                             </div>
 
-                            <!-- sort -->
+                            <!-- filter -->
                             <div class="col-lg-6 col-12 d-none d-sm-block mt-sm-3 mt-lg-0">
                                 <div class="row align-items-center">
                                     <div class="col d-block d-lg-none">
 
                                     </div>
                                     <div class="col-2 text-center pt-4">
-                                        <span class="color-deep-violet fw-medium fs-4">Sort</span>
+                                        <span class="color-deep-violet fw-bold fs-5">Filter</span>
                                     </div>
-                                    <div class="col-lg-5 col-4">
+                                    <div class="col-lg-3 col-3">
                                         <div>
-                                            <div class="color-deep-violet fw-medium fs-6 mb-1">File Name</div>
+                                            <div class="color-deep-violet fw-medium fs-6 mb-1">Type</div>
                                             <select class="form-select form-select-sm"
                                                 aria-label=".dropdown-for-project-name">
-                                                <option selected>--</option>
-                                                <option value="1">Asc</option>
-                                                <option value="2">Decs</option>
+                                                <option selected></option>
+                                                <option value="1">PDF</option>
+                                                <option value="2">DOCX</option>
+                                                <option value="3">XLSX</option>
+                                                <option value="4">TXT</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-5 col-4">
+                                    <div class="col-lg-3 col-3">
+                                        <div>
+                                            <div class="color-deep-violet fw-medium fs-6 mb-1">Public</div>
+                                            <select class="form-select form-select-sm"
+                                                aria-label=".dropdown-for-project-name">
+                                                <option selected></option>
+                                                <option value="1">Yes</option>
+                                                <option value="2">No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-3">
                                         <div>
                                             <div class="color-deep-violet fw-medium fs-6 mb-1">Created Date</div>
                                             <select class="form-select form-select-sm"
                                                 aria-label=".dropdown-for-created-date">
-                                                <option selected>--</option>
-                                                <option value="1">Asc</option>
-                                                <option value="2">Decs</option>
+                                                <option selected></option>
+                                                <option value="1">Today</option>
+                                                <option value="2">Last 7 days</option>
+                                                <option value="3">Last 30 days</option>
+                                                <option value="4">This year</option>
                                             </select>
                                         </div>
                                     </div>
@@ -335,7 +350,7 @@
                             </div>
                         </div>
 
-                        <!--Task assigned to me-->
+                        <!--Files-->
                         <div class="row align-items-center mt-2">
                             <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
                                 style="height: 100%; margin-right: -25px;">
@@ -379,7 +394,7 @@
 
                                     <div class="col d-none d-md-block text-center">
                                         <div class="fw-bold fs-6 color-deep-violet">
-                                            Is Public
+                                            Public
                                         </div>
                                     </div>
                                 </div>
@@ -394,7 +409,7 @@
                         </div>
 
 
-                        <div class="full-width-box white-background p-2 hover-shadow-box">
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
                             <div class="row align-items-center">
                                 <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
                                     style="height: 100%; margin-right: -25px;">
@@ -405,38 +420,38 @@
 
                                     <div class="row align-items-center">
                                         <div class="col col-sm-4">
-                                            <div class="fw-medium fs-6 color-deep-violet">
-                                                Nhập môn độ phức tạp thuật toán (chương 1).pdf
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-lg-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 4.5MB
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-lg-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 No
                                             </div>
                                         </div>
 
                                         <div class="col text-center d-none d-sm-block">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 17/7/2024
                                             </div>
                                         </div>
 
                                         <div class="col text-center d-none d-sm-block">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 <i class="bi bi-share color-blue fs-5 pe-1"></i>
                                                 <i class="bi bi-trash3 color-red fs-5"></i>                                              
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-md-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 No
                                             </div>
                                         </div>
@@ -455,7 +470,7 @@
                             </div>
                         </div>
 
-                        <div class="full-width-box white-background p-2 hover-shadow-box mt-1">
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
                             <div class="row align-items-center">
                                 <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
                                     style="height: 100%; margin-right: -25px;">
@@ -466,38 +481,343 @@
 
                                     <div class="row align-items-center">
                                         <div class="col col-sm-4">
-                                            <div class="fw-medium fs-6 color-deep-violet">
-                                                Nhập môn độ phức tạp thuật toán (chương 1).pdf
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                Nhập môn phân tích độ phức tạp thuật toán (chương 1).mp4
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-lg-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 4.5MB
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-lg-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 No
                                             </div>
                                         </div>
 
                                         <div class="col text-center d-none d-sm-block">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 17/7/2024
                                             </div>
                                         </div>
 
                                         <div class="col text-center d-none d-sm-block">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 <i class="bi bi-share color-blue fs-5 pe-1"></i>
                                                 <i class="bi bi-trash3 color-red fs-5"></i>                                              
                                             </div>
                                         </div>
 
                                         <div class="col d-none d-md-block text-center">
-                                            <div class="fw-medium fs-6 color-deep-violet">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                                    <div class="view-detail hover-to-bg-light-violet clickable"
+                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
+                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                            style="font-size: 18pt;"></i>
+                                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+                            <div class="row align-items-center">
+                                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                                    style="height: 100%; margin-right: -25px;">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+
+                                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                                    <div class="row align-items-center">
+                                        <div class="col col-sm-4">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                4.5MB
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                17/7/2024
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                <i class="bi bi-share color-blue fs-5 pe-1"></i>
+                                                <i class="bi bi-trash3 color-red fs-5"></i>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-md-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                                    <div class="view-detail hover-to-bg-light-violet clickable"
+                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
+                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                            style="font-size: 18pt;"></i>
+                                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+                            <div class="row align-items-center">
+                                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                                    style="height: 100%; margin-right: -25px;">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+
+                                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                                    <div class="row align-items-center">
+                                        <div class="col col-sm-4">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                4.5MB
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                17/7/2024
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                <i class="bi bi-share color-blue fs-5 pe-1"></i>
+                                                <i class="bi bi-trash3 color-red fs-5"></i>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-md-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                                    <div class="view-detail hover-to-bg-light-violet clickable"
+                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
+                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                            style="font-size: 18pt;"></i>
+                                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+                            <div class="row align-items-center">
+                                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                                    style="height: 100%; margin-right: -25px;">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+
+                                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                                    <div class="row align-items-center">
+                                        <div class="col col-sm-4">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                4.5MB
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                17/7/2024
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                <i class="bi bi-share color-blue fs-5 pe-1"></i>
+                                                <i class="bi bi-trash3 color-red fs-5"></i>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-md-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                                    <div class="view-detail hover-to-bg-light-violet clickable"
+                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
+                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                            style="font-size: 18pt;"></i>
+                                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+                            <div class="row align-items-center">
+                                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                                    style="height: 100%; margin-right: -25px;">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+
+                                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                                    <div class="row align-items-center">
+                                        <div class="col col-sm-4">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                4.5MB
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                17/7/2024
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                <i class="bi bi-share color-blue fs-5 pe-1"></i>
+                                                <i class="bi bi-trash3 color-red fs-5"></i>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-md-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Download -->
+                                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                                    <div class="view-detail hover-to-bg-light-violet clickable"
+                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
+                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                            style="font-size: 18pt;"></i>
+                                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+                            <div class="row align-items-center">
+                                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                                    style="height: 100%; margin-right: -25px;">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+
+                                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                                    <div class="row align-items-center">
+                                        <div class="col col-sm-4">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                PTUDW.mp4
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                4.5MB
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-lg-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                No
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                17/7/2024
+                                            </div>
+                                        </div>
+
+                                        <div class="col text-center d-none d-sm-block">
+                                            <div class="fw-medium fs-5 color-deep-violet">
+                                                <i class="bi bi-share color-blue fs-5 pe-1"></i>
+                                                <i class="bi bi-trash3 color-red fs-5"></i>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col d-none d-md-block text-center">
+                                            <div class="fw-medium fs-5 color-deep-violet">
                                                 No
                                             </div>
                                         </div>
