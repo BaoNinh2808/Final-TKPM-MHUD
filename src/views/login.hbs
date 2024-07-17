@@ -37,7 +37,7 @@
         <div class="card centered-card container py-3">
             <h5 class="text-center mb-3"><strong>Login to your account</strong></h5>
             
-            <form class="container ps-5 pe-5" id="loginForm">
+            <form class="container ps-5 pe-5" id="loginForm" action="/auth/login" method="POST">
                 <div class="mb-3">
                     <label for="input-email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="input-email" name="email" placeholder="email@gmail.com" required>
@@ -79,7 +79,7 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
-    <script>
+    {{!-- <script>
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
 
@@ -105,6 +105,7 @@
                 });
 
                 if (!response.ok) {
+                    console.log("ERROR");
                     throw new Error('Network response was not ok');
                 }
 
@@ -122,6 +123,6 @@
             }
         });
 
-    </script>
+    </script> --}}
 </body>
 </html>
