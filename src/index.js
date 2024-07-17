@@ -63,7 +63,7 @@ app.get('/register', (req, res) => {
 
 console.log(__dirname);
 app.get('/home', (req, res) => {
-    res.sendFile(__dirname + '/views/layouts/layout.html');
+    res.render('homepage',{layout: false});
 });
 
 //404 page

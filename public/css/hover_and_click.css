@@ -1,0 +1,37 @@
+@import url(color.css);
+
+/* Hover and click*/
+
+/* Clickable element*/
+.clickable{
+    cursor: pointer;
+}
+
+/* Hover effect*/
+.hover-to-blue:hover{
+    color: var(--color-blue);
+}
+
+.hover-to-red:hover{
+    color: var(--color-red);
+}
+
+.hover-shadow-box:hover{
+    box-shadow: 0px 0px 10px 0px var(--color-gray);
+}
+
+.hover-to-bg-light-violet:hover{
+    background-color: #DBD9F6;
+}
+
+.hover-to-bg-gray:hover{
+    background-color: var(--color-gray);
+}
+
+.hover-to-bg-darken-green:hover{
+    background-color: #21D267;
+}
+
+.hover-to-bg-darken-blue:hover{
+    background-color: #1CBAFD;
+}
