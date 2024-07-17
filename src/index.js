@@ -6,6 +6,8 @@ const app = express();
 const port = process.env.port || 3000;
 const path = require('path');
 
+const { sequelize } = require('./models');
+
 app.use(morgan('combined'));
 
 // // Middleware for handling sessions
@@ -16,7 +18,10 @@ app.use(morgan('combined'));
 //     cookie: { secure: false }
 // }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
+
+console.log(path.join(__dirname, 'public'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -36,6 +41,14 @@ app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).send('Internal Server Error!');
 });
+
+// sync data
+sequelize.sync({ force: false }).then(() => {
+    console.log('Database & tables created!');
+}).catch(error => {
+    console.error('Error creating database & tables:', error);
+});
+
 
 // Start the server
 app.listen(port, () => {

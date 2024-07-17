@@ -1,0 +1,101 @@
+/*define color using in this project*/
+
+:root {
+    --color-background: #F3F4F8;
+
+    --color-green: #50DF89;
+    --color-deep-violet: #232360;
+    --color-black: #1E1E1E;
+    --color-gray: #9C9C9C;
+    --color-blue: #5051F9;
+    --color-light-blue: #1400FF;
+    --color-sea: #00B2FF;
+    --color-deep-sea: #53C4F4;
+    --color-red: #D50707;
+    --color-orange: #FF9900;
+    --color-deep-orange: #FF694A;
+    --color-deep-green: #227575;
+    --color-white: #FFFFFF;
+    --color-bronze: #D4A778;
+    --color-brown: #5A0D0D;
+}
+
+.color-green{
+    color: var(--color-green);
+}
+
+.color-deep-violet{
+    color: var(--color-deep-violet);
+}
+
+.color-black{
+    color: var(--color-black);
+}
+
+.color-gray{
+    color: var(--color-gray);
+}
+
+.color-blue{
+    color: var(--color-blue);
+}
+
+.color-light-blue{
+    color: var(--color-light-blue);
+}
+
+.color-sea{
+    color: var(--color-sea);
+}
+
+.color-deep-sea{
+    color: var(--color-deep-sea);
+}
+
+.color-red{
+    color: var(--color-red);
+}
+
+.color-orange{
+    color: var(--color-orange);
+}
+
+.color-deep-orange{
+    color: var(--color-deep-orange);
+}
+
+.color-deep-green{
+    color: var(--color-deep-green);
+}
+
+.color-white{
+    color: var(--color-white);
+}
+
+.color-bronze{
+    color: var(--color-bronze);
+}
+
+.color-brown{
+    color: var(--color-brown);
+}
+
+.primary-background{
+    background-color: var(--color-background);
+}
+
+.white-background{
+    background-color: var(--color-white);
+}
+
+.gray-background{
+    background-color: #E3E3E3;
+}
+
+.green-background{
+    background-color: var(--color-green);
+}
+
+.deep-sea-background{
+    background-color: var(--color-deep-sea);
+}

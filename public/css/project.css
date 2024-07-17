@@ -1,0 +1,345 @@
+body {
+    font-family: "DM Sans", sans-serif;
+}
+
+#search-input {
+    width: 100%;
+}
+
+.ellispe {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#search-input::placeholder {
+    opacity: 25%;
+}
+
+.search-bar {
+    width: 20%;
+}
+
+.header-append i{
+    margin-left: 10px;
+}
+
+.header-append{
+    margin-right: 20px;
+}
+
+.form {
+    position: relative;
+}
+
+.form .bi-search {
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    right: 5%;
+}
+
+.navigation-menu {
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.navigation-menu a {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #232360;
+}
+
+.navigation-menu a.active {
+    border-bottom: solid;
+    border-bottom-color: #5051F9;
+}
+
+.scroll-button {
+    height: 2.5rem;
+    width: 2.5rem;
+    background-color: #50DF89;
+    display: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: 50%;
+}
+
+.left-scroll {
+    position: absolute;
+    left: 0;
+}
+
+.right-scroll {
+    position: absolute;
+    right: 0;
+}
+
+.navigation-container{
+    position: relative;
+}
+
+.inner-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+nav.project-detail-nav a{
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #232360;
+}
+
+nav.project-detail-nav a:not(:last-child):after{
+    content: ">";
+    margin: 0 10px;
+}
+
+.hover-icon:hover {
+    cursor: pointer;
+}
+
+.sidebar {
+    height: 866px !important;
+}
+
+.sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+}
+
+
+.sidebar a.active {
+    background-color: #EDECFE;
+    color: black;
+    color: #5051FB;
+}
+
+.sidebar a:hover:not(.active) {
+    background-color: #EDECFE;
+    color: black;
+}
+
+.sidebar-element {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.sidebar-element .icon {
+    margin-bottom: 5px;
+}
+
+.sidebar-element .icon i {
+    font-size: 24px;
+}
+
+.btn-key {
+    color: #232360 !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    border-radius: 5px;
+    background: #f3f4f8 !important;
+}
+
+
+.btn-light-green {
+    color: #232360 !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    background: var(--light-green) !important;
+}
+
+.btn-light-blue {
+    color: #232360 !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    background: var(--light-blue) !important;
+}
+
+
+/* custom CSS for card */
+.card {
+    width: 100%;
+    height: 100%;
+}
+
+.card .card-body {
+    height: 100%;
+}
+
+.custom-card {
+    padding: 20px;
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+}
+
+.custom-card h3{
+    font-size: 1.5rem;
+}
+
+.custom-divider {
+    height: 2px; 
+    background-color: #eeeeee; 
+    margin: 0 1rem 1rem 1rem;
+}
+
+/* custom color */
+:root {
+    --dark-blue: #232360;
+    --light-blue: #7bd0f5;
+    --light-green: #50DF89;
+}
+
+::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+h3 {
+    color: #232360 !important;
+    font-weight: 600;
+}
+
+.input-zoom {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1000 !important;
+    font-size: 1.5em !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 999 !important;
+  }
+
+@media screen and (max-width: 1180px) {
+    .main-content {
+        padding: 0 20px;
+    }
+}
+
+@media screen and (max-width: 1022px) {
+    .menu-container {
+        margin-top: 20px;
+    }
+}
+
+@media screen and (max-width: 880px) {
+    .search-bar {
+        width: 40%;
+    }
+    .sidebar {
+        display: none !important;
+    }
+    .logo {
+        margin-left: 10px !important;
+    }
+    .main-content{
+        flex-grow: 1;
+    }
+    .project-info {
+        padding: 0;
+        margin: 0 !important;
+    }
+}
+
+/* css for homepage*/
+
+.task-status{
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 0px solid #fff;
+    width: 270px;
+    height: 190px;
+}
+
+.circle {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    position: relative;
+}
+
+.add-project {
+    display: flex;
+    flex-direction: column;
+    background-color: #EDECFE;
+    border-radius: 10px;
+    border: 0px solid #EDECFE;
+    width: 160px;
+    height: 160px;
+    align-items: center; /* Horizontal center alignment */
+    justify-content: center; /* Vertical center alignment */
+}
+
+.add-new-project{
+    display: inline-flex; /* Use inline-flex to make it only take the necessary width and height */
+    align-items: center; /* Horizontal center alignment */
+    justify-content: center; /* Vertical center alignment */
+    background-color: #50DF89;
+    border-radius: 5px;
+    border: 0px solid #50DF89;
+    padding: 0px 20px;
+}
+
+.project-tag{
+    margin-top: 5px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 0px solid #fff;
+    width: 290px;
+    height: 290px;
+}
+
+.view-detail{
+    display: inline-flex; /* Use inline-flex to make it only take the necessary width and height */
+    align-items: center; /* Horizontal center alignment */
+    justify-content: center; /* Vertical center alignment */
+    background-color: #EDECFE;
+    border-radius: 0.5rem;
+    border: 0px solid #EDECFE;
+    padding: 5px 10px;
+}
+
+.full-width-box{
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    border: 0px solid transparent;
+    padding: 0px;
+}

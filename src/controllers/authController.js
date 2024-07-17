@@ -1,12 +1,36 @@
 const moment = require('moment');
+const bcrypt = require('bcrypt');
+const { User } = require('../models');
+
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
 };
 
 exports.register = (req, res) => {
-    res.render('register', { layout: false });
+    res.render('register', {layout: false});
+}
+
+exports.handleRegister = async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const user = await User.create({
+            email,
+            password: hashedPassword,
+            name,
+            phone_number: null,
+            avatar_image: null,
+            role: "user",
+        });
+
+        res.status(201).json({ message: 'User registered successfully!', user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
+
 
 exports.handleLogin = (req, res) => {
     // console.log("HELLO");

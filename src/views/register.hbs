@@ -38,7 +38,7 @@
         <div class="card centered-card container py-3">
             <h5 class="text-center mb-3"><strong>Register your account</strong></h5>
             
-            <form class="container ps-5 pe-5" id="registerForm">
+            <form class="container ps-5 pe-5" id="registerForm" action="auth/register" method="POST">
                 <div class="mb-3">
                     <label for="input-name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="input-name" name="name" placeholder="Enter your name" required>
@@ -80,7 +80,7 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
-    <script>
+    {{!-- <script>
         document.getElementById('registerForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
 
@@ -125,6 +125,6 @@
             }
         });
 
-    </script>
+    </script> --}}
 </body>
 </html>
