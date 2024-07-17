@@ -14,6 +14,9 @@ exports.register = (req, res) => {
 exports.handleRegister = async (req, res) => {
     try {
         const { name, email, password } = req.body;
+
+        // console.log(req.body);
+
         const hashedPassword = await bcrypt.hash(password, 10);
         
         const user = await User.create({
@@ -25,34 +28,57 @@ exports.handleRegister = async (req, res) => {
             role: "user",
         });
 
-        res.status(201).json({ message: 'User registered successfully!', user });
+        // console.log(user);
+
+        // res.status(201).json({ message: 'User registered successfully!', user });
+        return res.redirect('/login');
     } catch (error) {
+        console.error('Error during registration:', error);
+
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(e => e.message);
+            return res.status(400).json({ error: 'Validation error', details: errors });
+        }
+
         res.status(500).json({ error: error.message });
     }
 };
 
 
-exports.handleLogin = (req, res) => {
-    // console.log("HELLO");
+exports.handleLogin = async (req, res) => {
+    try {
+        // console.log("HELLO");
 
-    const { email, password } = req.body;
+        const { email, password } = req.body;
 
-    // console.log(req.body);
+        // console.log(req.body);
 
-    const user = { email: 'test@gmail.com', password: 'testpass', role: 'user' }; // example user
+        const user = await User.findOne({ where: { email } });
 
-    // console.log(username);
-    // console.log(password);
+        if (!user){
+            console.log("Authentication failed: User not found");
+            // req.flash('error_message', 'Invalid email or password');
+            return res.redirect('/login');
+        }
 
-    if (email === user.email && password === user.password) {
-        // req.session.user = user;
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch){
+            console.log("Authentication failed: Incorrect password");
+            // req.flash('error_message', 'Invalid email or password');
+            return res.redirect('/login');
+        }
+
+        // console.log(username);
+        // console.log(password);
+
         if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
             return res.redirect('/verify');
         }
-        return res.redirect('/home');
-    } else {
-        console.log("Authentication failed");
-        return res.redirect('/login');
+        return res.redirect('/home'); 
+    } catch (error) {
+        console.error('Error during authentication', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 

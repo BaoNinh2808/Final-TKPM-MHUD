@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -18,10 +17,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        isEmail: true
+      }
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          len: [8, 100] // Đảm bảo mật khẩu có độ dài từ 8 đến 100 ký tự
+        }
     },
     name: {
         type: DataTypes.STRING,

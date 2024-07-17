@@ -1,6 +1,6 @@
 {
     "development": {
-      "username": "postgres",
+      "username": "haison",
       "password": "240303",
       "database": "Final-TKPM-MHUD-DB",
       "host": "127.0.0.1",
