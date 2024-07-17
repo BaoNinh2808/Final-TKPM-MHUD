@@ -1,20 +1,32 @@
-// cofig to use express
 const express = require('express');
-const app = express();
-const port = process.env.port || 3000;
-const path = require("path");
-const moment = require('moment');
+const session = require('express-session');
+const morgan = require('morgan');
 
-// config to use handlebars
+const app = express();
+const port = process.env.port || 2000;
+const path = require('path');
+
+const { sequelize } = require('./models');
+
+app.use(morgan('combined'));
 const expressHbs = require('express-handlebars');
 
-// set static folder is public
-app.use(express.static(path.dirname(__dirname) + "/public"));
+// // Middleware for handling sessions
+// app.use(session({
+//     secret: 'your_secret_key',
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: false }
+// }));
 
-console.log(path.dirname(__dirname) + "/public");
+app.use(express.static(path.join(__dirname, '/public')));
+
+
+console.log(path.join(__dirname, 'public'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use('/', require('./routes/authRoutes'));
 // set view engine
 app.engine(
     'hbs',
@@ -43,7 +55,7 @@ app.set('view engine', 'hbs');
 
 //create tables by code
 app.get('/createTables', (req, res) => {
-    const models = require('../models');
+    const models = require('./models');
     models.sequelize.sync().then(() => {
         res.send('table created');
     });
@@ -66,18 +78,26 @@ app.get('/home', (req, res) => {
     res.render('homepage',{layout: false});
 });
 
-//404 page
-app.use((req, res, next) =>{
+// 404 page
+app.use((req, res, next) => {
     res.status(404).send('File not found!');
-})
+});
 
-//500 error
-app.use((err, req, res, next) =>{
+// 500 error
+app.use((err, req, res, next) => {
     console.log(err);
     res.status(500).send('Internal Server Error!');
-})
+});
 
-//Start the server
+// sync data
+sequelize.sync({ force: false }).then(() => {
+    console.log('Database & tables created!');
+}).catch(error => {
+    console.error('Error creating database & tables:', error);
+});
+
+
+// Start the server
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`);
 });
