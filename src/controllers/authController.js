@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User, Device, UserDevice } = require('../models');
+const { User, Device, UserDevice, IPAddress, UserIPAddress } = require('../models');
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
@@ -40,6 +40,15 @@ exports.handleRegister = async (req, res) => {
                 userID: user.id,
                 deviceID: device.id
             });
+
+            const ip = await IPAddress.create({
+                ipAddress: req.ip,
+            });
+
+            const userIPAdress = await UserIPAddress.create({
+                userID: user.id,
+                ipAddressID: ip.id
+            })
 
             return res.redirect('/login');
         }
