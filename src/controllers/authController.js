@@ -1,15 +1,13 @@
-const moment = require('moment');
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
-
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
 };
 
 exports.register = (req, res) => {
-    res.render('register', {layout: false});
-}
+    res.render('register', { layout: false });
+};
 
 exports.handleRegister = async (req, res) => {
     try {
@@ -28,10 +26,20 @@ exports.handleRegister = async (req, res) => {
             role: "user",
         });
 
+<<<<<<< HEAD
         // console.log(user);
 
         // res.status(201).json({ message: 'User registered successfully!', user });
         return res.redirect('/login');
+=======
+        if (!user) {
+            // update phía client - thông báo lỗi
+            return res.status(400).json({ error: 'Cannot create user' });
+        }
+        else {
+            return res.redirect('/login');
+        }
+>>>>>>> ghuy
     } catch (error) {
         console.error('Error during registration:', error);
 
@@ -44,6 +52,7 @@ exports.handleRegister = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 exports.handleLogin = async (req, res) => {
     try {
@@ -79,9 +88,34 @@ exports.handleLogin = async (req, res) => {
     } catch (error) {
         console.error('Error during authentication', error);
         res.status(500).json({ error: 'Internal Server Error' });
+=======
+exports.handleLogin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ where: { email } });
+        console.log(user);
+        if (!user) {
+            // update lại client side nếu user không tồn tại
+            return res.redirect('/login');
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+
+        if (match) {
+            // if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
+            //     return res.redirect('/verify');
+            // }
+            return res.redirect('/home');
+        } else {
+            console.log("Authentication failed");
+            return res.redirect('/login');
+        }
+    } catch (error) {
+        console.error(error);
+        return res.redirect('/login');
+>>>>>>> ghuy
     }
 };
-
 
 // Utility functions for adaptive authentication
 function isNewDevice(req) {
@@ -97,7 +131,6 @@ function isSuspiciousLocation(req) {
 }
 
 function isHighRiskTime(time) {
-    // const hours = time.getHours();
-    // return hours < 6 || hours > 22;
-    return false;
+    const hours = time.getHours();
+    return hours < 6 || hours > 22;
 }
