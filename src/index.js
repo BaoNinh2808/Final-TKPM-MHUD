@@ -61,6 +61,11 @@ app.get('/register', (req, res) => {
     res.render('register',{layout: false});
 });
 
+app.get('/otp', (req, res) => {
+    res.render('OTP',{layout: false});
+});
+
+
 console.log(__dirname);
 app.get('/home', (req, res) => {
     res.render('homepage',{layout: false});
