@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { User } = require('../models');
+const { User, Device, UserDevice } = require('../models');
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
@@ -11,9 +11,9 @@ exports.register = (req, res) => {
 
 exports.handleRegister = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, deviceId } = req.body;
 
-        // console.log(req.body);
+        console.log(deviceId);
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
@@ -26,20 +26,23 @@ exports.handleRegister = async (req, res) => {
             role: "user",
         });
 
-<<<<<<< HEAD
-        // console.log(user);
-
-        // res.status(201).json({ message: 'User registered successfully!', user });
-        return res.redirect('/login');
-=======
         if (!user) {
             // update phía client - thông báo lỗi
             return res.status(400).json({ error: 'Cannot create user' });
         }
         else {
+            // Dang ky thanh cong --> luu agentID cua device vao database
+            const device = await Device.create({
+                device: deviceId
+            });
+
+            const userDevice = await UserDevice.create({
+                userID: user.id,
+                deviceID: device.id
+            });
+
             return res.redirect('/login');
         }
->>>>>>> ghuy
     } catch (error) {
         console.error('Error during registration:', error);
 
@@ -52,43 +55,43 @@ exports.handleRegister = async (req, res) => {
     }
 };
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
 
-exports.handleLogin = async (req, res) => {
-    try {
-        // console.log("HELLO");
+// exports.handleLogin = async (req, res) => {
+//     try {
+//         // console.log("HELLO");
 
-        const { email, password } = req.body;
+//         const { email, password } = req.body;
 
-        // console.log(req.body);
+//         // console.log(req.body);
 
-        const user = await User.findOne({ where: { email } });
+//         const user = await User.findOne({ where: { email } });
 
-        if (!user){
-            console.log("Authentication failed: User not found");
-            // req.flash('error_message', 'Invalid email or password');
-            return res.redirect('/login');
-        }
+//         if (!user){
+//             console.log("Authentication failed: User not found");
+//             // req.flash('error_message', 'Invalid email or password');
+//             return res.redirect('/login');
+//         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+//         const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch){
-            console.log("Authentication failed: Incorrect password");
-            // req.flash('error_message', 'Invalid email or password');
-            return res.redirect('/login');
-        }
+//         if (!isMatch){
+//             console.log("Authentication failed: Incorrect password");
+//             // req.flash('error_message', 'Invalid email or password');
+//             return res.redirect('/login');
+//         }
 
-        // console.log(username);
-        // console.log(password);
+//         // console.log(username);
+//         // console.log(password);
 
-        if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
-            return res.redirect('/verify');
-        }
-        return res.redirect('/home'); 
-    } catch (error) {
-        console.error('Error during authentication', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-=======
+//         if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
+//             return res.redirect('/verify');
+//         }
+//         return res.redirect('/home'); 
+//     } catch (error) {
+//         console.error('Error during authentication', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+// =======
 exports.handleLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -113,7 +116,7 @@ exports.handleLogin = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.redirect('/login');
->>>>>>> ghuy
+// >>>>>>> ghuy
     }
 };
 

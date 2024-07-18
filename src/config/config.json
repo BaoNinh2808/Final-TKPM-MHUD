@@ -1,12 +1,5 @@
 {
     "development": {
-<<<<<<< HEAD
-      "username": "haison",
-      "password": "240303",
-      "database": "Final-TKPM-MHUD-DB",
-      "host": "127.0.0.1",
-      "dialect": "postgres"
-=======
       "username": "storingdb",
       "password": "7nIP2dqQdl8izjtUBQT8N4pDKR2xvhxk",
       "database": "storingdb",
@@ -18,7 +11,6 @@
           "rejectUnauthorized": false
         }
       }
->>>>>>> ghuy
     },
     "test": {
       "username": "root",

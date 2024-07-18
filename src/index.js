@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
+const useragent = require('./middleware/deviceMiddleware');
 
 const app = express();
 const port = process.env.port || 2000;
@@ -26,6 +27,11 @@ console.log(path.join(__dirname, 'public'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(useragent); // su dung deviceMiddleware
+
+
+//import routes
 app.use('/', require('./routes/authRoutes'));
 // set view engine
 app.engine(

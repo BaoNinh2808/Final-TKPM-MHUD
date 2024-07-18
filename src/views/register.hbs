@@ -126,5 +126,31 @@
         });
 
     </script> --}}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async (event) => {
+        try {
+            const FingerprintJS = await import('https://fpjscdn.net/v3/OlgF0wkZCueWxjQcQUCs');
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+
+            console.log(result.requestId, result.visitorId);
+
+            const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
+
+            const form = document.getElementById('registerForm');
+            if (form) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'deviceId';
+                input.value = deviceId;
+                form.appendChild(input);
+            }
+        } catch (error) {
+            console.error('Error loading FingerprintJS:', error);
+        }
+    });
+</script>
+
 </body>
 </html>
