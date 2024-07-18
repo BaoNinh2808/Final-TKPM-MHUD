@@ -134,7 +134,7 @@
             const fp = await FingerprintJS.load();
             const result = await fp.get();
 
-            console.log(result.requestId, result.visitorId);
+            //console.log(result.requestId, result.visitorId);
 
             const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
 
@@ -150,7 +150,7 @@
             console.error('Error loading FingerprintJS:', error);
         }
     });
-</script>
+    </script>
 
 </body>
 </html>

@@ -64,48 +64,35 @@ exports.handleRegister = async (req, res) => {
     }
 };
 
-// <<<<<<< HEAD
-
-// exports.handleLogin = async (req, res) => {
-//     try {
-//         // console.log("HELLO");
-
-//         const { email, password } = req.body;
-
-//         // console.log(req.body);
-
-//         const user = await User.findOne({ where: { email } });
-
-//         if (!user){
-//             console.log("Authentication failed: User not found");
-//             // req.flash('error_message', 'Invalid email or password');
-//             return res.redirect('/login');
-//         }
-
-//         const isMatch = await bcrypt.compare(password, user.password);
-
-//         if (!isMatch){
-//             console.log("Authentication failed: Incorrect password");
-//             // req.flash('error_message', 'Invalid email or password');
-//             return res.redirect('/login');
-//         }
-
-//         // console.log(username);
-//         // console.log(password);
-
-//         if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
-//             return res.redirect('/verify');
-//         }
-//         return res.redirect('/home'); 
-//     } catch (error) {
-//         console.error('Error during authentication', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-// =======
 exports.handleLogin = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, deviceId } = req.body;
+        const ipAddress = req.ip;
+
+        // Kiem tra user
         const user = await User.findOne({ where: { email } });
-        console.log(user);
+
+        // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
+        const userDevices = await UserDevice.findAll({where: {userID: user.id}});
+        const deviceIds = userDevices.map(ud => ud.deviceID);
+
+        // // Kiem tra thiet bi moi co nam trong danh sach khong
+        const device = await Device.findOne({where: { device: deviceId}});
+        const deviceExists = device && deviceIds.includes(device.id);
+
+        console.log(deviceExists);
+
+        // // Kiem tra dia chi IP cua user
+        const userIps = await UserIPAddress.findAll({ where: { userID: user.id } });
+        const ipIds = userIps.map(ui => ui.ipAddressID);
+
+        const ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
+        const ipExists = ip && ipIds.includes(ip.id);
+
+        console.log(ipExists);
+
+
+        // console.log(user);
         if (!user) {
             // update lại client side nếu user không tồn tại
             return res.redirect('/login');
@@ -113,10 +100,13 @@ exports.handleLogin = async (req, res) => {
 
         const match = await bcrypt.compare(password, user.password);
 
+        // kiem tra email && password
         if (match) {
-            // if (isNewDevice(req) || isAdmin(user) || isSuspiciousLocation(req) || isHighRiskTime(new Date())) {
-            //     return res.redirect('/verify');
-            // }
+            // kiem tra deviceInfo && IPAddress
+            if (!deviceExists || !ipExists){
+                // Neu thiet bi va dia chi ip moi thi chuyen den trang xac thuc
+                return res.redirect('/verify');
+            }
             return res.redirect('/home');
         } else {
             console.log("Authentication failed");
@@ -125,24 +115,6 @@ exports.handleLogin = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.redirect('/login');
-// >>>>>>> ghuy
     }
 };
 
-// Utility functions for adaptive authentication
-function isNewDevice(req) {
-    return false;
-}
-
-function isAdmin(user) {
-    return user.role === 'admin';
-}
-
-function isSuspiciousLocation(req) {
-    return false;
-}
-
-function isHighRiskTime(time) {
-    const hours = time.getHours();
-    return hours < 6 || hours > 22;
-}

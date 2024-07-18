@@ -79,6 +79,33 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async (event) => {
+            try {
+                const FingerprintJS = await import('https://fpjscdn.net/v3/OlgF0wkZCueWxjQcQUCs');
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+
+                //console.log(result.requestId, result.visitorId);
+
+                const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
+
+                const form = document.getElementById('loginForm');
+                if (form) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'deviceId';
+                    input.value = deviceId;
+                    form.appendChild(input);
+                }
+            } catch (error) {
+                console.error('Error loading FingerprintJS:', error);
+            }
+        });
+    </script>
+    
+
+
     {{!-- <script>
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
