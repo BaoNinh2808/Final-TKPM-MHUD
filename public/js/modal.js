@@ -78,7 +78,6 @@ function displayFiles() {
         }
     }
     showButtons();
-    showRightBelowToast("File uploaded successfully!");
 }
 
 
@@ -125,35 +124,38 @@ uploadButton.addEventListener('click', async () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('/upload', {
-        method: 'PUT',
-        body: formData
-    });
+    // Disable the upload button
+    uploadButton.disabled = true;
+    uploadButton.textContent = 'Uploading...';
 
-    if (response.ok) {
-        console.log('OK');
-        return;
+    try {
+        const response = await fetch('/upload', {
+            method: 'PUT',
+            body: formData
+        });
+
+        if (response.ok) {
+            removeButton.click();
+            // Hide the modal
+            let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-upload-file'));
+            modal.hide();
+
+            // Reload the page
+            location.reload();
+            // Show success message
+            showRightBelowToast("File uploaded successfully!");
+        } else {
+            console.log('Error uploading file');
+            // Show error message
+            showRightBelowToast('<p class="color-red">Upload file error!</p>');
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        // Show error message
+        showRightBelowToast('<p class="color-red">Upload file error!</p>');
+    } finally {
+        // Re-enable the upload button
+        uploadButton.disabled = false;
+        uploadButton.textContent = 'Upload'; // Optional: reset the button text
     }
-    else {
-        console.log('ERRRr');
-        return;
-    }
-    // const pinataMetadata = JSON.stringify({ name: file.name });
-    // formData.append('pinataMetadata', pinataMetadata);
-
-    // const pinataOptions = JSON.stringify({ cidVersion: 0 });
-    // formData.append('pinataOptions', pinataOptions);
-
-    // try {
-    //     const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-    //         maxBodyLength: "Infinity",
-    //         headers: {
-    //             'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-    //             'Authorization': `Bearer ${JWT}`
-    //         }
-    //     });
-    //     console.log(res.data);
-    // } catch (error) {
-    //     console.log(error);
-    // }
 });
