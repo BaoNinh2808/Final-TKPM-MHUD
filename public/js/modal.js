@@ -1,4 +1,4 @@
-
+const uploadButton = document.getElementById('upload-new-file-button');
 const dropArea = document.querySelector('.drag-area');
 const dragText = document.querySelector('.header');
 
@@ -65,9 +65,10 @@ function displayFiles() {
                         iconClass = 'fas fa-file-word';  // Word icon class
                     }
                     divTag.innerHTML = `<div class="file-icon"><i class="${iconClass}"></i></div><div class="file-name">${file.name}</div>`;
-
                 }
+
                 dropArea.appendChild(divTag);
+                uploadButton.dataset.fileIndex = i;
             };
             fileReader.readAsDataURL(file);
         } else {
@@ -86,6 +87,7 @@ function showButtons() {
 }
 
 removeButton.addEventListener('click', () => {
+    uploadButton.dataset.fileIndex = '';
     files = [];
     dropArea.classList.remove('active');
     dropArea.innerHTML = `
@@ -109,4 +111,49 @@ removeButton.addEventListener('click', () => {
         dropArea.classList.add('active');
         displayFiles();
     });
+});
+
+uploadButton.addEventListener('click', async () => {
+    const fileIndex = uploadButton.dataset.fileIndex;
+    if (fileIndex === undefined) {
+        alert('No file selected for upload');
+        return;
+    }
+
+    const file = files[fileIndex];
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/upload', {
+        method: 'PUT',
+        body: formData
+    });
+
+    if (response.ok) {
+        console.log('OK');
+        return;
+    }
+    else {
+        console.log('ERRRr');
+        return;
+    }
+    // const pinataMetadata = JSON.stringify({ name: file.name });
+    // formData.append('pinataMetadata', pinataMetadata);
+
+    // const pinataOptions = JSON.stringify({ cidVersion: 0 });
+    // formData.append('pinataOptions', pinataOptions);
+
+    // try {
+    //     const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+    //         maxBodyLength: "Infinity",
+    //         headers: {
+    //             'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+    //             'Authorization': `Bearer ${JWT}`
+    //         }
+    //     });
+    //     console.log(res.data);
+    // } catch (error) {
+    //     console.log(error);
+    // }
 });

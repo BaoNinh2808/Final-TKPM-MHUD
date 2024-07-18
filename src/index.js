@@ -66,6 +66,8 @@ app.get('/home', (req, res) => {
     res.render('homepage',{layout: false});
 });
 
+app.use('/upload', require('./routes/homeRoute'));
+
 //404 page
 app.use((req, res, next) =>{
     res.status(404).send('File not found!');
