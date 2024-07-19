@@ -79,13 +79,21 @@ app.get('/register', (req, res) => {
     res.render('register',{layout: false});
 });
 
+app.get('/otp', (req, res) => {
+    res.render('OTP',{layout: false});
+});
+
+
 console.log(__dirname);
 app.get('/home', (req, res) => {
     res.render('homepage',{layout: false});
 });
 
-// 404 page
-app.use((req, res, next) => {
+
+app.use('/upload', require('./routes/homeRoute'));
+
+//404 page
+app.use((req, res, next) =>{
     res.status(404).send('File not found!');
 });
 
