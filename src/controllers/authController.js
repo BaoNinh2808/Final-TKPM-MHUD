@@ -80,7 +80,7 @@ exports.handleLogin = async (req, res) => {
         const device = await Device.findOne({where: { device: deviceId}});
         const deviceExists = device && deviceIds.includes(device.id);
 
-        console.log(deviceExists);
+        // console.log(deviceExists);
 
         // // Kiem tra dia chi IP cua user
         const userIps = await UserIPAddress.findAll({ where: { userID: user.id } });
@@ -89,7 +89,7 @@ exports.handleLogin = async (req, res) => {
         const ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
         const ipExists = ip && ipIds.includes(ip.id);
 
-        console.log(ipExists);
+        // console.log(ipExists);
 
 
         // console.log(user);
