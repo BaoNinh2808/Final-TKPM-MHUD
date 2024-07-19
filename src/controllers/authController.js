@@ -13,12 +13,9 @@ exports.register = (req, res) => {
 
 exports.handleRegister = async (req, res) => {
     try {
-        const { name, email, password, deviceId } = req.body;
-
-        console.log(deviceId);
-
+        const { name, email, password, deviceId, ipAddress } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+        console.log(deviceId);
         const user = await User.create({
             email,
             password: hashedPassword,
@@ -34,23 +31,27 @@ exports.handleRegister = async (req, res) => {
         }
         else {
             // Dang ky thanh cong --> luu agentID cua device vao database
-            const device = await Device.create({
-                device: deviceId
-            });
+            let device = await Device.findOne({ where: { device: deviceId } });
+            if (!device) {
+                device = await Device.create({
+                    device: deviceId
+                });
+            }
+            let userDevice = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
+            if (!userDevice) {
+                await UserDevice.create({ userID: user.id, deviceID: device.id });
+            }
 
-            const userDevice = await UserDevice.create({
-                userID: user.id,
-                deviceID: device.id
-            });
-
-            const ip = await IPAddress.create({
-                ipAddress: req.ip,
-            });
-
-            const userIPAdress = await UserIPAddress.create({
-                userID: user.id,
-                ipAddressID: ip.id
-            })
+            let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
+            if (!ip) {
+                ip = await IPAddress.create({
+                    ipAddress: ipAddress
+                });
+            }
+            let userIP = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
+            if (!userIP) {
+                await UserIPAddress.create({ userID: user.id, ipAddressID: ip.id });
+            }
 
             return res.redirect('/login');
         }
@@ -68,8 +69,7 @@ exports.handleRegister = async (req, res) => {
 
 exports.handleLogin = async (req, res) => {
     try {
-        const { email, password, deviceId } = req.body;
-        const ipAddress = req.ip;
+        const { email, password, deviceId, ipAddress } = req.body;
 
         // Kiem tra user
         const user = await User.findOne({ where: { email } });
@@ -84,15 +84,20 @@ exports.handleLogin = async (req, res) => {
         }
 
         let device = await Device.findOne({ where: { device: deviceId } });
+        let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
+        console.log(ip);
         if (!device) {
             device = await Device.create({
                 device: deviceId
             });
         }
-
+        if (!ip) {
+            ip = await IPAddress.create({
+                ipAddress: ipAddress
+            });
+        }
         let userDevice = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
-        
-
+        let userIP = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
 
 
         // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
@@ -112,9 +117,7 @@ exports.handleLogin = async (req, res) => {
 
         // console.log(ipExists);
 
-        if (!userDevice) {
-            
-
+        if (!userDevice || !userIP) {
             const pin = generatePIN();
             
             // Save the PIN for verification
@@ -125,7 +128,7 @@ exports.handleLogin = async (req, res) => {
             });
 
             const mailOptions = {
-                from: 'huymasterpiece@gmail.com',
+                from: 'F88.com - Nha cai den tu Chau Au',
                 to: user.email,
                 subject: 'Verification PIN',
                 text: `A login attempt was made from a new device or IP address. Please verify by entering this PIN: ${pin}`
@@ -138,10 +141,10 @@ exports.handleLogin = async (req, res) => {
             req.session.deviceId = deviceId;
             req.session.ipAddress = ipAddress;
 
-
             // Redirect to verification page
             return res.redirect('/OTP');
         }
+
 
         // If the device and IP are verified
         const token = jwt.sign(

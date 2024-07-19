@@ -692,7 +692,7 @@
 
         function logout() {
             axios.post('/auth/logout', {
-                token: getCookie("refreshToken")
+                token: getCookie('refreshToken')
             }, {
                 headers: {
                     'Content-Type': 'application/json'
