@@ -1,0 +1,30 @@
+{
+    "development": {
+      "username": "storingdb",
+      "password": "7nIP2dqQdl8izjtUBQT8N4pDKR2xvhxk",
+      "database": "storingdb",
+      "host": "dpg-cqc0qg88fa8c73cj71ng-a.singapore-postgres.render.com",
+      "dialect": "postgres",
+      "dialectOptions": {
+        "ssl": {
+          "require": true,
+          "rejectUnauthorized": false
+        }
+      }
+    },
+    "test": {
+      "username": "root",
+      "password": null,
+      "database": "database_test",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "production": {
+      "username": "root",
+      "password": null,
+      "database": "database_production",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  }
+  
