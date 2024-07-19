@@ -90,7 +90,7 @@ app.get('/home', (req, res) => {
 });
 
 
-app.use('/upload', require('./routes/homeRoute'));
+app.use('/upload', require('./routes/uploadRoutes'));
 
 //404 page
 app.use((req, res, next) =>{
