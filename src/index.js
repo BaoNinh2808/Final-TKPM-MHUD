@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const useragent = require('./middleware/deviceMiddleware');
 
 const app = express();
-const port = process.env.port || 2000;
+const port = process.env.port || 3000;
 const path = require('path');
 
 const { sequelize } = require('./models');
@@ -20,10 +20,10 @@ const expressHbs = require('express-handlebars');
 //     cookie: { secure: false }
 // }));
 
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(path.dirname(__dirname), '/public')));
 
 
-console.log(path.join(__dirname, 'public'));
+console.log("dir", path.join(path.dirname(__dirname), '/public'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
