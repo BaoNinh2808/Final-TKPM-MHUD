@@ -343,3 +343,88 @@ h3 {
     border: 0px solid transparent;
     padding: 0px;
 }
+
+.upload-container {
+    max-width: 550px;
+    width: 100%;
+    padding: 30px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.drag-area {
+    height: 300px;
+    border: 3px dashed #e0eafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 10px auto;
+}
+
+h3 {
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.drag-area .icon {
+    font-size: 50px;
+    color: #1683ff;
+}
+
+.drag-area .header {
+    font-size: 20px;
+    font-weight: 500;
+    color: #34495e;
+}
+
+.drag-area .support {
+    font-size: 12px;
+    color: gray;
+    margin: 10px 0 15px 0;
+}
+
+.drag-area .button {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1683ff;
+    cursor: pointer;
+}
+
+.drag-area.active {
+    border: 2px solid #1683ff;
+}
+
+.drag-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+button.remove {
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.file-icon {
+    font-size: 120px;
+    flex: 1;  /* Grow to fill the space */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;  /* Full width of the parent */
+}
+
+.file-name {
+    margin-top: 10px;
+    text-align: center;
+}

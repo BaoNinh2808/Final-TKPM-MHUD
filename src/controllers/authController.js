@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
-const { User, Device, UserDevice, IPAddress, UserIPAddress } = require('../models');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const { User, Device, UserDevice, IPAddress, UserIPAddress,Verification } = require('../models');
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
@@ -69,15 +71,27 @@ exports.handleLogin = async (req, res) => {
         const { email, password, deviceId } = req.body;
         const ipAddress = req.ip;
 
+        console.log("Device ID: ", deviceId);
         // Kiem tra user
         const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return res.redirect('/login');
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            console.log("Authentication failed");
+            return res.redirect('/login');
+        }
 
         // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
         const userDevices = await UserDevice.findAll({where: {userID: user.id}});
         const deviceIds = userDevices.map(ud => ud.deviceID);
 
         // // Kiem tra thiet bi moi co nam trong danh sach khong
-        const device = await Device.findOne({where: { device: deviceId}});
+        const device = await Device.findOne({ where: { device: deviceId } });
         const deviceExists = device && deviceIds.includes(device.id);
 
         // console.log(deviceExists);
@@ -91,30 +105,76 @@ exports.handleLogin = async (req, res) => {
 
         // console.log(ipExists);
 
+        if (!deviceExists) {
+            const pin = generatePIN();
+            
+            // Save the PIN for verification
+            await Verification.create({
+                userID: user.id,
+                pin: pin
+            });
 
-        // console.log(user);
-        if (!user) {
-            // update lại client side nếu user không tồn tại
+            const mailOptions = {
+                from: 'huymasterpiece@gmail.com',
+                to: user.email,
+                subject: 'Verification PIN',
+                text: `A login attempt was made from a new device or IP address. Please verify by entering this PIN: ${pin}`
+            };
+
+            await transporter.sendMail(mailOptions);
+
+            // Redirect to verification page
+            // return res.redirect('/verify');
             return res.redirect('/login');
         }
 
-        const match = await bcrypt.compare(password, user.password);
+        // If the device and IP are verified
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            process.env.JWT_KEY,
+            { expiresIn: '1h' }
+        );
 
-        // kiem tra email && password
-        if (match) {
-            // kiem tra deviceInfo && IPAddress
-            if (!deviceExists || !ipExists){
-                // Neu thiet bi va dia chi ip moi thi chuyen den trang xac thuc
-                return res.redirect('/verify');
-            }
-            return res.redirect('/home');
-        } else {
-            console.log("Authentication failed");
-            return res.redirect('/login');
-        }
+        res.cookie('token', token, { httpOnly: true });
+        
+        return res.redirect('/home');
     } catch (error) {
         console.error(error);
         return res.redirect('/login');
     }
 };
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'huymasterpiece@gmail.com',
+        pass: 'egsl weqx svkh ukue'
+    }
+});
+
+function generatePIN() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+exports.verifyPIN = async (req, res) => {
+    try {
+        const { userId, pin } = req.body;
+
+        const verification = await Verification.findOne({ where: { userID: userId, pin } });
+
+        if (!verification) {
+            return res.status(400).send('Invalid PIN');
+        }
+
+        // If the PIN is correct, you can proceed with the login process
+        // Mark the device and IP as verified if needed
+        await UserDevice.create({ userID: userId, deviceID: verification.deviceID });
+        await UserIPAddress.create({ userID: userId, ipAddressID: verification.ipAddress });
+
+        // Redirect to home
+        return res.redirect('/home');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Server error');
+    }
+};
