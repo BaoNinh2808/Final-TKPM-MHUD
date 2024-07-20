@@ -129,7 +129,7 @@ uploadButton.addEventListener('click', async () => {
     uploadButton.textContent = 'Uploading...';
 
     try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/home', {
             method: 'PUT',
             body: formData
         });
@@ -145,7 +145,6 @@ uploadButton.addEventListener('click', async () => {
             // Show success message
             showRightBelowToast("File uploaded successfully!");
         } else {
-            console.log('Error uploading file');
             // Show error message
             showRightBelowToast('<p class="color-red">Upload file error!</p>');
         }

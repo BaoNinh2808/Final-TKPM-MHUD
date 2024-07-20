@@ -60,7 +60,7 @@
 
             <div class="text-center">
                 <h5 class="mb-1">Please check your email</h5>
-                <h6 style="color: gray;">We've sent a code to user@gmail.com</h6>
+                <h6 style="color: gray;">We've sent a 6-digit verification code to your email</h6>
             </div>
             <div class="row mt-3 ms-4 me-4">
                 <div class="col-2 d-flex align-items-center justify-content-center">
@@ -84,12 +84,13 @@
             </div>
 
             <div class="text-center mt-4">
-                <button class="btn btn-primary w-50">Verify</button>
+                <button class="btn btn-primary w-50" id="verifyBtn">Verify</button>
             </div>
 
             <div class="text-center mt-2 mb-3">
-                <span>Didn't recieve OPT?</span>
-                <a href="#" style="color: #1570EF; cursor: pointer;">Resend</a>
+                <span>Didn't receive OTP?</span>
+                <a href="#" style="color: #1570EF; cursor: pointer;" id="resendBtn">Resend now</a>
+                <span id="countdown" style="color: #1570EF; display: none;"></span>
             </div>
         </div>
 
@@ -109,7 +110,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const otpInputs = document.querySelectorAll('.otp-letter-input');
-
+            const verifyBtn = document.getElementById('verifyBtn');
+            const resendBtn = document.getElementById('resendBtn');
+            const countdownElem = document.getElementById('countdown');
+            
             otpInputs.forEach((input, index) => {
                 input.addEventListener('input', (e) => {
                     // Get the current input value
@@ -134,6 +138,78 @@
                     }
                 });
             });
+
+            verifyBtn.addEventListener('click', async function(event) {
+                const first = document.getElementById('first').value;
+                const second = document.getElementById('second').value;
+                const third = document.getElementById('third').value;
+                const fourth = document.getElementById('fourth').value;
+                const fifth = document.getElementById('fifth').value;
+                const sixth = document.getElementById('sixth').value;
+                const otp = first + second + third + fourth + fifth + sixth;
+
+                try {
+                    const response = await fetch('/auth/verify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ pin: otp })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'An error occurred while verifying OTP.');
+                    }
+
+                    window.location.href = '/home';
+                } catch (error) {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-text').innerText = error.message;
+                }
+            });
+
+            const startCountdown = () => {
+                let timeLeft = 60;
+                countdownElem.style.display = 'inline';
+                resendBtn.style.display = 'none';
+                
+                const interval = setInterval(() => {
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        countdownElem.style.display = 'none';
+                        resendBtn.style.display = 'inline';
+                        resendBtn.disabled = false;
+                    } else {
+                        countdownElem.textContent = ` in ${timeLeft}s`;
+                        timeLeft--;
+                    }
+                }, 1000);
+            };
+
+            resendBtn.addEventListener('click', async function(event) {
+                try {
+                    const response = await fetch('/auth/resend', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'An error occurred while resending OTP.');
+                    }
+
+                    startCountdown();
+                } catch (error) {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-text').innerText = error.message;
+                }
+            });
+
+            startCountdown();
+
         });
 
     </script>

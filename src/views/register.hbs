@@ -93,7 +93,6 @@
             const FingerprintJS = await import('https://fpjscdn.net/v3/OlgF0wkZCueWxjQcQUCs');
             const fp = await FingerprintJS.load();
             const result = await fp.get();
-
             const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
             //console.log("Device ID:", deviceId);
 
