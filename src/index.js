@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
+const moment = require('moment');
 const useragent = require('./middleware/deviceMiddleware');
 const startCronJobs = require('./utils/cron');
 const app = express();
@@ -23,7 +24,7 @@ app.use(session({
 app.use(express.static(path.join(path.dirname(__dirname), '/public')));
 
 
-console.log("dir", path.join(path.dirname(__dirname), '/public'));
+// console.log("dir", path.join(path.dirname(__dirname), '/public'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,6 +34,17 @@ app.use(useragent); // su dung deviceMiddleware
 
 //import routes
 app.use('/', require('./routes/authRoutes'));
+
+const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+};
+
 // set view engine
 app.engine(
     'hbs',
@@ -51,11 +63,53 @@ app.engine(
                 },
                 eq: function (a, b) {
                     return a === b;
+                },
+                formatBytes: (bytes) => {
+                    return formatBytes(bytes);
+                },
+                mimeIcon: function (mimeType) {
+                    const icons = {
+                        'image/png': 'bi bi-file-earmark-image',
+                        'image/jpeg': 'bi bi-file-earmark-image',
+                        'image/gif': 'bi bi-file-earmark-image',
+                        'image/bmp': 'bi bi-file-earmark-image',
+                        'image/svg+xml': 'bi bi-file-earmark-image',
+                        'image/vnd.microsoft.icon': 'bi bi-file-earmark-image',
+                        'text/html': 'bi bi-file-earmark-code',
+                        'text/css': 'bi bi-file-earmark-code',
+                        'application/javascript': 'bi bi-file-earmark-code',
+                        'application/json': 'bi bi-file-earmark-code',
+                        'application/xml': 'bi bi-file-earmark-code',
+                        'text/plain': 'bi bi-file-earmark-text',
+                        'text/csv': 'bi bi-file-earmark-text',
+                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'bi bi-file-earmark-word',
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'bi bi-file-earmark-excel',
+                        'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'bi bi-file-earmark-powerpoint',
+                        'application/pdf': 'bi bi-file-earmark-pdf',
+                        'application/rtf': 'bi bi-file-earmark-text',
+                        'application/vnd.oasis.opendocument.text': 'bi bi-file-earmark-text',
+                        'application/vnd.oasis.opendocument.spreadsheet': 'bi bi-file-earmark-excel',
+                        'application/vnd.oasis.opendocument.presentation': 'bi bi-file-earmark-powerpoint',
+                        'application/zip': 'bi bi-file-earmark-zip',
+                        'application/vnd.rar': 'bi bi-file-earmark-zip',
+                        'application/x-7z-compressed': 'bi bi-file-earmark-zip',
+                        'audio/mpeg': 'bi bi-file-earmark-music',
+                        'audio/wav': 'bi bi-file-earmark-music',
+                        'audio/ogg': 'bi bi-file-earmark-music',
+                        'video/mp4': 'bi bi-file-earmark-video',
+                        'video/x-msvideo': 'bi bi-file-earmark-video',
+                        'video/quicktime': 'bi bi-file-earmark-video',
+                        'video/x-ms-wmv': 'bi bi-file-earmark-video',
+                        'video/mpeg': 'bi bi-file-earmark-video'
+                    };
+
+                    return icons[mimeType] || 'bi bi-file-earmark';
                 }
             }
         }
     )
 )
+
 app.set("views", __dirname + "/views");
 app.set('view engine', 'hbs');
 
@@ -84,13 +138,11 @@ app.get('/otp', (req, res) => {
 });
 
 
-console.log(__dirname);
-app.get('/home', (req, res) => {
-    res.render('homepage',{layout: false});
-});
+// console.log(__dirname);
+app.use('/home', require('./routes/homeRoutes'));
 
 
-app.use('/upload', require('./routes/homeRoute'));
+app.use('/upload', require('./routes/uploadRoutes'));
 
 //404 page
 app.use((req, res, next) =>{
