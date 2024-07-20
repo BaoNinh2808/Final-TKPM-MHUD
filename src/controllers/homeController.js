@@ -125,4 +125,46 @@ controller.handleUpload = async (req, res, next) => {
     }
 };
 
+controller.deleteFile = async (req, res) => {
+    const fileName = req.body.file_name;
+    const user_id = 1;
+    console.log('Deleting file:', fileName);
+    //check if file exists in database
+    const document = await db.Document.findOne({
+        where: {
+            name: fileName,
+            user_id: user_id
+        }
+    });
+
+
+    if (document) {
+        const response = await fetch(
+            `https://api.pinata.cloud/pinning/unpin/${document.CID}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${JWT}`,
+              },
+            }
+          );
+
+        if (response.ok) {
+            console.log('File deleted from IPFS:', document.CID);
+            //delete file from database
+            await db.Document.destroy({
+                where: {
+                    name: fileName,
+                    user_id: user_id
+                }
+            });
+            res.status(200).json({ message: 'File deleted successfully' });
+        }
+        else {
+            console.error('Failed to delete file:', response.status, response.statusText);
+            res.status(500).json({ error: 'Failed to delete file' });
+        }
+    }
+}
+
 module.exports = controller;

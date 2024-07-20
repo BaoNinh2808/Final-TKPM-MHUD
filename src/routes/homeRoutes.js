@@ -10,5 +10,6 @@ const controller = require("../controllers/homeController");
 
 router.get('/', controller.getHomePage);
 router.put('/', controller.upload, controller.handleUpload);
+router.delete('/', controller.deleteFile);
 
 module.exports = router;
