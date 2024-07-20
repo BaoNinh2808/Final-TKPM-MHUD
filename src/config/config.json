@@ -10,7 +10,8 @@
           "require": true,
           "rejectUnauthorized": false
         }
-      }
+      },
+      "logging": false
     },
     "test": {
       "username": "root",

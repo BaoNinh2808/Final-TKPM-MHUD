@@ -10,40 +10,6 @@ const path = require('path');
 //Tất cả các xử lý sẽ nằm trong đây
 const controller = {}
 
-//xử lý cho trang chủ
-controller.home = async (req, res, next) => {
-    const formData = new FormData();
-    const src = "Orig1708.png";
-
-    const file = fs.createReadStream(src)
-    formData.append('file', file)
-    console.log("file", file);
-    const pinataMetadata = JSON.stringify({
-        name: 'File name',
-    });
-    formData.append('pinataMetadata', pinataMetadata);
-
-    const pinataOptions = JSON.stringify({
-        cidVersion: 0,
-    })
-    formData.append('pinataOptions', pinataOptions);
-
-    console.log("formdata", formData);
-
-    // try{
-    //   const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-    //     maxBodyLength: "Infinity",
-    //     headers: {
-    //       'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-    //       'Authorization': `Bearer ${JWT}`
-    //     }
-    //   });
-    //   console.log(res.data);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-}
-
 // Handle file upload
 controller.upload = upload.single('file');
 
