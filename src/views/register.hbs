@@ -134,6 +134,10 @@
             const fp = await FingerprintJS.load();
             const result = await fp.get();
 
+            const response = await fetch('https://api.ipify.org/?format=json');
+            const data = await response.json();
+            const ipAddress = data.ip; // Địa chỉ IP
+
             //console.log(result.requestId, result.visitorId);
 
             const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
@@ -145,6 +149,12 @@
                 input.name = 'deviceId';
                 input.value = deviceId;
                 form.appendChild(input);
+
+                const input2 = document.createElement('input');
+                input2.type = 'hidden';
+                input2.name = 'ipAddress';
+                input2.value = ipAddress;
+                form.appendChild(input2);
             }
         } catch (error) {
             console.error('Error loading FingerprintJS:', error);

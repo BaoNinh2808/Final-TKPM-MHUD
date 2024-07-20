@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const useragent = require('./middleware/deviceMiddleware');
-
+const startCronJobs = require('./utils/cron');
 const app = express();
 const port = process.env.port || 3000;
 const path = require('path');
@@ -13,12 +13,12 @@ app.use(morgan('combined'));
 const expressHbs = require('express-handlebars');
 
 // // Middleware for handling sessions
-// app.use(session({
-//     secret: 'your_secret_key',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: false }
-// }));
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
 
 app.use(express.static(path.join(path.dirname(__dirname), '/public')));
 
@@ -109,6 +109,9 @@ sequelize.sync({ force: false }).then(() => {
 }).catch(error => {
     console.error('Error creating database & tables:', error);
 });
+
+// cron jobs
+startCronJobs();
 
 
 // Start the server
