@@ -57,6 +57,12 @@
                         <span>Password must have at least 8 characters</span>
                     </div>
                 </div>
+
+                <input type="hidden" id="deviceId" name="deviceId">
+                <input type="hidden" id="ipAddress" name="ipAddress">
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+
                 <button type="submit" class="btn btn-primary w-100 mt-3">Register now</button>
             </form>
 
@@ -80,74 +86,63 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
 
-    {{!-- <script>
-        document.getElementById('registerForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Loading layer on submit button
-            const submitButton = document.querySelector('button[type="submit"]');
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
-            submitButton.disabled = true;
-
-            // Get form data
-            const formData = {
-                name: document.getElementById('input-name').value,
-                email: document.getElementById('input-email').value,
-                password: document.getElementById('input-password').value
-            };
-
-            try {
-                // Send POST request to server
-                const response = await fetch('http://localhost:3000/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                // Redirect user after successful registration
-                window.location.href = '/login'; // Assuming this is your login page
-            } catch (error) {
-                console.error('Error:', error);
-                // Handle errors (show error message to user, etc.)
-                // Example: Show error message to user
-                const errorMessageElement = document.getElementById('issue-assign-error-2');
-                errorMessageElement.style.display = 'block';
-            } finally {
-                // Reset submit button
-                submitButton.innerHTML = 'Register now';
-                submitButton.disabled = false;
-            }
-        });
-
-    </script> --}}
-
     <script>
     document.addEventListener('DOMContentLoaded', async (event) => {
         try {
+            // Lấy mã định danh thiết bị
             const FingerprintJS = await import('https://fpjscdn.net/v3/OlgF0wkZCueWxjQcQUCs');
             const fp = await FingerprintJS.load();
             const result = await fp.get();
 
-            //console.log(result.requestId, result.visitorId);
-
             const deviceId = result.visitorId; // Mã định danh thiết bị duy nhất
+            //console.log("Device ID:", deviceId);
+
+            // Lấy địa chỉ IP công khai
+            const response = await fetch('/get-public-ip');
+            const data = await response.json();
+            const ipAddress = data.ip;
+            //console.log("IP Address:", ipAddress);
+
+            // Lấy vị trí kinh độ, vĩ độ
+            const latitude = data.lat;
+            const longitude = data.lon;
+
 
             const form = document.getElementById('registerForm');
-            if (form) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'deviceId';
-                input.value = deviceId;
-                form.appendChild(input);
-            }
+                if (form) {
+                    const deviceInput = form.querySelector('input[name="deviceId"]');
+                    const ipInput = form.querySelector('input[name="ipAddress"]');
+                    const latitudeInput = form.querySelector('input[name="latitude"]');
+                    const longitudeInput = form.querySelector('input[name="longitude"]');
+
+                    if (deviceInput) {
+                        deviceInput.value = deviceId;
+                    } else {
+                        console.error('Device input not found');
+                    }
+
+                    if (ipInput) {
+                        ipInput.value = ipAddress;
+                    } else {
+                        console.error('IP input not found');
+                    }
+
+                    if (latitudeInput) {
+                        latitudeInput.value = latitude;
+                    } else {
+                        console.error('latitude input not found');
+                    }
+
+                    if (longitude) {
+                        longitudeInput.value = longitude;
+                    } else {
+                        console.error('longitude input not found');
+                    }
+                } else {
+                    console.error('Form not found');
+                }
         } catch (error) {
-            console.error('Error loading FingerprintJS:', error);
+            console.error('Error:', error);
         }
     });
     </script>

@@ -1,7 +1,14 @@
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-const { User, Device, UserDevice, IPAddress, UserIPAddress,Verification } = require('../models');
+const { User, Device, UserDevice, IPAddress, UserIPAddress, Location, UserLocation, Verification } = require('../models');
+const { where } = require('sequelize');
+
+// Doc file config authentication
+const configPath = path.resolve(__dirname, '../config/configAuthentication.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
@@ -13,9 +20,10 @@ exports.register = (req, res) => {
 
 exports.handleRegister = async (req, res) => {
     try {
-        const { name, email, password, deviceId } = req.body;
+        const { name, email, password, deviceId, ipAddress, latitude, longitude } = req.body;
 
-        console.log(deviceId);
+        // console.log("hello" + latitude + "world");
+        // console.log("hello" + longitude + "world");
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
@@ -33,24 +41,37 @@ exports.handleRegister = async (req, res) => {
             return res.status(400).json({ error: 'Cannot create user' });
         }
         else {
-            // Dang ky thanh cong --> luu agentID cua device vao database
-            const device = await Device.create({
-                device: deviceId
-            });
+            // Dang ky thanh cong --> luu userINFO (device, IP address, location) vao database
+            let device = await Device.findOne({ where: { device: deviceId } });
+            if (!device) {
+                // Nếu chưa tồn tại, thêm thiết bị mới
+                device = await Device.create({ device: deviceId });
+            }
 
             const userDevice = await UserDevice.create({
                 userID: user.id,
                 deviceID: device.id
             });
 
-            const ip = await IPAddress.create({
-                ipAddress: req.ip,
-            });
+            let ip = await IPAddress.findOne({ where: {ipAddress: ipAddress }})
+            if (!ip){
+                ip = await IPAddress.create({ipAddress: ipAddress});
+            }
 
             const userIPAdress = await UserIPAddress.create({
                 userID: user.id,
                 ipAddressID: ip.id
             })
+
+            const location = await Location.create({
+                lat: latitude,
+                long: longitude
+            });
+
+            const userLocation = await UserLocation.create({
+                userID: user.id,
+                locationID: location.id
+            });
 
             return res.redirect('/login');
         }
@@ -68,10 +89,11 @@ exports.handleRegister = async (req, res) => {
 
 exports.handleLogin = async (req, res) => {
     try {
-        const { email, password, deviceId } = req.body;
-        const ipAddress = req.ip;
+        const { email, password, deviceId, ipAddress, latitude, longitude } = req.body;
+        // const ipAddress = req.ip;
 
-        console.log("Device ID: ", deviceId);
+        // console.log("latitude: ", latitude);
+        // console.log("longitude: ", longitude);
         // Kiem tra user
         const user = await User.findOne({ where: { email } });
 
@@ -86,26 +108,64 @@ exports.handleLogin = async (req, res) => {
             return res.redirect('/login');
         }
 
-        // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
-        const userDevices = await UserDevice.findAll({where: {userID: user.id}});
-        const deviceIds = userDevices.map(ud => ud.deviceID);
+        let device = await Device.findOne({ where: { device: deviceId } });
+        let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
 
-        // // Kiem tra thiet bi moi co nam trong danh sach khong
-        const device = await Device.findOne({ where: { device: deviceId } });
-        const deviceExists = device && deviceIds.includes(device.id);
+        let deviceExists = true;
+        let ipExists = true;
+        let locationExists = true;
 
-        // console.log(deviceExists);
+        if (config.conditions.device) {
+            // // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
+            // const userDevices = await UserDevice.findAll({where: {userID: user.id}});
+            // console.log("User id: ", user.id);
+            // const deviceIds = userDevices.map(ud => ud.deviceID);
+            // console.log("deviceIds: ", deviceIds);
 
-        // // Kiem tra dia chi IP cua user
-        const userIps = await UserIPAddress.findAll({ where: { userID: user.id } });
-        const ipIds = userIps.map(ui => ui.ipAddressID);
+            // // Kiem tra thiet bi moi co nam trong danh sach khong
+            // const device = await Device.findOne({ where: { device: deviceId } });
+            // console.log("device: ", device);
+            // deviceExists = device && deviceIds.includes(device.id);
 
-        const ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
-        const ipExists = ip && ipIds.includes(ip.id);
+            deviceExists = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
+            console.log("Device exists: ", deviceExists);
+        }
 
-        // console.log(ipExists);
+        if (config.conditions.ipAddress) {
+            // Kiem tra dia chi IP cua user
+            // const userIps = await UserIPAddress.findAll({ where: { userID: user.id } });
+            // const ipIds = userIps.map(ui => ui.ipAddressID);
 
-        if (!deviceExists) {
+            // const ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
+            // ipExists = ip && ipIds.includes(ip.id);
+
+
+            ipExists = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
+            console.log("IP exists: ", ipExists);
+        }
+
+
+        if (config.conditions.locationRadius){
+            // Kiem tra Location cua user
+            const userLocations = await UserLocation.findAll({ where: { userID: user.id } });
+            const locations = await Location.findAll({
+                where: {
+                    id: userLocations.map(ul => ul.locationID)
+                }
+            })
+
+            for (const loc of locations){
+                const distance = haversine(latitude, longitude, loc.lat, loc.long);
+                if (distance <= config.conditions.locationRadius){ // kiem tra ban kinh 5km
+                    locationExists = true;
+                    break;
+                }
+            }
+            console.log("Location exists: ", locationExists);
+        }
+
+
+        if (!deviceExists || !ipExists || !locationExists) {
             const pin = generatePIN();
             
             // Save the PIN for verification
@@ -178,3 +238,19 @@ exports.verifyPIN = async (req, res) => {
         return res.status(500).send('Server error');
     }
 };
+
+
+// Công thức Haversine để tính khoảng cách giữa hai điểm địa lý
+function haversine(lat1, lon1, lat2, lon2) {
+    const toRad = x => x * Math.PI / 180;
+    const R = 6371; // Bán kính trái đất tính theo km
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}

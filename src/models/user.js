@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.belongsToMany(models.Device, { through: 'UserDevice', foreignKey: 'userID', otherKey: 'deviceID'});
-      User.belongsToMany(models.IPAddress, {through: 'UserIPAddress', foreignKey: 'userID', otherKey: 'ipAddressID'});
+      User.belongsToMany(models.IPAddress, { through: 'UserIPAddress', foreignKey: 'userID', otherKey: 'ipAddressID'});
+      User.belongsToMany(models.Location, { through: 'UserLocation', foreignKey: 'userID', otherKey: 'locationID'});
     }
   }
   User.init({
