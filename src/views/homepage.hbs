@@ -465,9 +465,8 @@
 
                                 <!-- Download -->
                                 <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
-                                    <div class="view-detail hover-to-bg-light-violet clickable"
-                                        onclick="location.href='/project/{{project_id}}/issues/getIssue?issueId={{issue_id}}';">
-                                        <i class="bi bi-box-arrow-right color-blue d-none d-md-block"
+                                    <div class="download hover-to-bg-light-violet clickable" data-cid="{{CID}}" data-file-name="{{name}}">
+                                        <i class="bi bi-cloud-download color-blue d-none d-md-block"
                                             style="font-size: 18pt;"></i>
                                         <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
                                     </div>
@@ -591,7 +590,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <button type="button" class="btn btn-info" id="copyLinkBtn" style="color: white;">Copy</button>
+                    <button type="button" class="btn btn-primary" id="copyLinkBtn">Copy</button>
                 </div>
             </div>
         </div>
@@ -605,6 +604,8 @@
     <script src="/js/modal.js"></script>
     <script src="/js/deleteFile.js"></script>
     <script src="/js/shareLink.js"></script>
+    <script src="/js/downloadFile.js"></script>
+
     <script>
         function reActivateTooltip() {
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')

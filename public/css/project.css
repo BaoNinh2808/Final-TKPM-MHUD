@@ -326,7 +326,7 @@ h3 {
     height: 290px;
 }
 
-.view-detail{
+.download{
     display: inline-flex; /* Use inline-flex to make it only take the necessary width and height */
     align-items: center; /* Horizontal center alignment */
     justify-content: center; /* Vertical center alignment */
