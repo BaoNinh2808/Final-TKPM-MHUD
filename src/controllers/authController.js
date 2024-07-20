@@ -150,7 +150,7 @@ exports.handleLogin = async (req, res) => {
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_KEY,
-            { expiresIn: '1h' }
+            { expiresIn: '60s' }
         );
 
         res.cookie('token', token, { httpOnly: true });
