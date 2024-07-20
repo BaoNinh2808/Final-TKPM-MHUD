@@ -449,3 +449,12 @@ button.remove {
 .sharing-link:hover {
     text-decoration: underline;
 }
+
+.text-wrap {
+    word-wrap: break-word; /* Ensures long words will wrap to the next line */
+    overflow-wrap: break-word; /* Same as word-wrap, preferred property */
+    word-break: break-all; /* Breaks word if it’s too long to fit */
+    overflow: hidden; /* Ensures any overflow text is hidden */
+    text-overflow: ellipsis; /* Adds ellipsis (...) for overflowed text */
+    white-space: nowrap; /* Prevents text from wrapping to the next line */
+}
