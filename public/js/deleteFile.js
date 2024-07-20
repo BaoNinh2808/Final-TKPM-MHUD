@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// click on delete project modal
+// click on delete file modal
 const deleteFileButton = document.getElementById('confirmDeleteBtn');
 
 deleteFileButton.addEventListener('click', async function() {

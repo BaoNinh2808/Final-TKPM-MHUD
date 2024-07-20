@@ -428,3 +428,24 @@ button.remove {
     margin-top: 10px;
     text-align: center;
 }
+
+.sharing-link-box {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.sharing-link {
+    margin: 0;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sharing-link:hover {
+    text-decoration: underline;
+}
