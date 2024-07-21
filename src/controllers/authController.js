@@ -1,7 +1,14 @@
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+const path = require('path');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-const { User, Device, UserDevice, IPAddress, UserIPAddress,Verification } = require('../models');
+const { User, Device, UserDevice, IPAddress, UserIPAddress, Location, UserLocation, Verification } = require('../models');
+const { where } = require('sequelize');
+
+// Doc file config authentication
+const configPath = path.resolve(__dirname, '../config/configAuthentication.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 exports.login = (req, res) => {
     res.render('login', { layout: false });
@@ -13,7 +20,12 @@ exports.register = (req, res) => {
 
 exports.handleRegister = async (req, res) => {
     try {
-        const { name, email, password, deviceId, ipAddress } = req.body;
+        const { name, email, password, deviceId, ipAddress, latitude, longitude } = req.body;
+
+        // console.log("hello" + latitude + "world");
+        // console.log("hello" + longitude + "world");
+
+
         const hashedPassword = await bcrypt.hash(password, 10);
         console.log(deviceId);
         const user = await User.create({
@@ -53,6 +65,22 @@ exports.handleRegister = async (req, res) => {
                 await UserIPAddress.create({ userID: user.id, ipAddressID: ip.id });
             }
 
+            let location = await Location.findOne({ where: {lat: latitude, long: longitude}});
+            if (!location){
+                location = await Location.create({
+                    lat: latitude,
+                    long: longitude
+                });
+            }
+
+            let userLocation = await UserLocation.findOne({ whrere: {userID: user.id, locationID: location.id}});
+            if (!userLocation) {
+                userLocation = await UserLocation.create({
+                    userID: user.id,
+                    locationID: location.id
+                });
+            }
+
             return res.redirect('/login');
         }
     } catch (error) {
@@ -69,7 +97,7 @@ exports.handleRegister = async (req, res) => {
 
 exports.handleLogin = async (req, res) => {
     try {
-        const { email, password, deviceId, ipAddress } = req.body;
+        const { email, password, deviceId, ipAddress, latitude, longitude } = req.body;
 
         // Kiem tra user
         const user = await User.findOne({ where: { email } });
@@ -85,39 +113,43 @@ exports.handleLogin = async (req, res) => {
 
         let device = await Device.findOne({ where: { device: deviceId } });
         let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
-        console.log(ip);
-        if (!device) {
-            device = await Device.create({
-                device: deviceId
-            });
+
+        let deviceExists = true;
+        let ipExists = true;
+        let locationExists = true;
+
+        if (config.conditions.device) {
+            deviceExists = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
+            console.log("Device exists: ", deviceExists);
         }
-        if (!ip) {
-            ip = await IPAddress.create({
-                ipAddress: ipAddress
-            });
+
+        if (config.conditions.ipAddress) {
+            ipExists = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
+            console.log("IP exists: ", ipExists);
         }
-        let userDevice = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
-        let userIP = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
 
 
-        // Lay danh sach thiet bi cua User da duoc xac thuc (luu o DB)
-        // const userDevices = await UserDevice.findAll({where: {userID: user.id}});
-        // const deviceIds = userDevices.map(ud => ud.deviceID);
+        if (config.conditions.locationRadius){
+            // Kiem tra Location cua user
+            const userLocations = await UserLocation.findAll({ where: { userID: user.id } });
+            const locations = await Location.findAll({
+                where: {
+                    id: userLocations.map(ul => ul.locationID)
+                }
+            })
 
-        // // // Kiem tra thiet bi moi co nam trong danh sach khong
-        // const device = await Device.findOne({ where: { device: deviceId } });
-        // const deviceExists = device && deviceIds.includes(device.id);
+            for (const loc of locations){
+                const distance = haversine(latitude, longitude, loc.lat, loc.long);
+                if (distance <= config.conditions.locationRadius){ // kiem tra ban kinh 5km
+                    locationExists = true;
+                    break;
+                }
+            }
+            console.log("Location exists: ", locationExists);
+        }
 
-        // // // Kiem tra dia chi IP cua user
-        // const userIps = await UserIPAddress.findAll({ where: { userID: user.id } });
-        // const ipIds = userIps.map(ui => ui.ipAddressID);
 
-        // const ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
-        // const ipExists = ip && ipIds.includes(ip.id);
-
-        // console.log(ipExists);
-
-        if (!userDevice || !userIP) {
+        if (!deviceExists || !ipExists || !locationExists) {
             const pin = generatePIN();
             
             // Save the PIN for verification
@@ -214,6 +246,22 @@ exports.verifyPIN = async (req, res) => {
     }
 };
 
+
+// Công thức Haversine để tính khoảng cách giữa hai điểm địa lý
+function haversine(lat1, lon1, lat2, lon2) {
+    const toRad = x => x * Math.PI / 180;
+    const R = 6371; // Bán kính trái đất tính theo km
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+
 exports.resendPIN = async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -248,4 +296,3 @@ exports.resendPIN = async (req, res) => {
         return res.status(500).json({ error: 'An error occurred while resending OTP. Please try again later.' });
     }
 }
-

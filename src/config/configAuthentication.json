@@ -1,0 +1,7 @@
+{
+    "conditions": {
+      "device": true,
+      "ipAddress": true,
+      "locationRadius": 5
+    }
+  }
