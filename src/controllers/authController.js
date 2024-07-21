@@ -139,7 +139,7 @@ exports.handleLogin = async (req, res) => {
             req.session.userId = user.id;
             req.session.deviceID = device.id;
             req.session.deviceId = deviceId;
-            req.session.ipAddress = ipAddress;
+            req.session.ipAddressID = ip.id;
 
             // Redirect to verification page
             return res.redirect('/OTP');
@@ -150,7 +150,7 @@ exports.handleLogin = async (req, res) => {
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_KEY,
-            { expiresIn: '1h' }
+            { expiresIn: '60s' }
         );
 
         res.cookie('token', token, { httpOnly: true });
@@ -180,7 +180,7 @@ exports.verifyPIN = async (req, res) => {
         const userId = req.session.userId;
         const deviceId = req.session.deviceId;
         const deviceID = req.session.deviceID;
-        const ipAddress = req.session.ipAddress;
+        const ipAddressID = req.session.ipAddressID;
 
         console.log(userId);
         if (!userId) {
@@ -195,8 +195,16 @@ exports.verifyPIN = async (req, res) => {
             return res.status(400).json({ error: 'Invalid PIN' });
         }
 
-        // If the PIN is correct, mark the device and IP as verified if needed
-        await UserDevice.create({ userID: userId, deviceID: deviceID });
+        // Check if the device or IP address has been verified
+        let userDevice = await UserDevice.findOne({ where : { userID: userId, deviceID: deviceID } });
+        let userIP = await UserIPAddress.findOne({ where : { userID: userId, ipAddressID: ipAddressID } });
+
+        if (!userDevice) {
+            await UserDevice.create({ userID: userId, deviceID: deviceID });
+        }
+        if (!userIP) {
+            await UserIPAddress.create({ userID: userId, ipAddressID:   ipAddressID });
+        }
 
         // Redirect to home
         return res.redirect('/home');

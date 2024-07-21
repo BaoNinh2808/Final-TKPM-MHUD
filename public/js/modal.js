@@ -146,12 +146,14 @@ uploadButton.addEventListener('click', async () => {
             showRightBelowToast("File uploaded successfully!");
         } else {
             // Show error message
-            showRightBelowToast('<p class="color-red">Upload file error!</p>');
+            const data = await response.json();
+            showRightBelowToast(`<p class="color-red">${data.error}</p>`);
         }
     } catch (error) {
         console.error('Error uploading file:', error);
+        const errorMessage = error.message || 'Upload file error!';
         // Show error message
-        showRightBelowToast('<p class="color-red">Upload file error!</p>');
+        showRightBelowToast(`<p class="color-red">${errorMessage} Please login again.</p>`);
     } finally {
         // Re-enable the upload button
         uploadButton.disabled = false;

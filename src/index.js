@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const moment = require('moment');
+const cookieParser = require('cookie-parser');
 const useragent = require('./middleware/deviceMiddleware');
 const startCronJobs = require('./utils/cron');
 const app = express();
@@ -10,6 +11,7 @@ const path = require('path');
 
 const { sequelize } = require('./models');
 
+app.use(cookieParser());
 app.use(morgan('combined'));
 const expressHbs = require('express-handlebars');
 

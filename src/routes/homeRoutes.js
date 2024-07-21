@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require("../controllers/homeController");
+const authMiddleware = require('../middleware/authMiddleware');
 
 // const homeController = require('../controllers/homeController');
 // const authMiddleware = require('../middleware/authMiddleware');
@@ -9,7 +10,7 @@ const controller = require("../controllers/homeController");
 // router.get('/verify', homeController.verify);
 
 router.get('/', controller.getHomePage);
-router.put('/', controller.upload, controller.handleUpload);
+router.put('/', authMiddleware,controller.upload, controller.handleUpload);
 router.delete('/', controller.deleteFile);
 
 module.exports = router;
