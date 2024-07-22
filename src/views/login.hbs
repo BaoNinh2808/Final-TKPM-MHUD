@@ -85,6 +85,21 @@
         crossorigin="anonymous"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = getCookie('isLogged');
+            if (isLoggedIn) {
+                window.location.href = '/home';
+            }
+        });
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', async (event) => {
             try {
                 // Lấy mã định danh thiết bị
