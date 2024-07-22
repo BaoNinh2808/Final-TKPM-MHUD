@@ -155,6 +155,11 @@ exports.handleLogin = async (req, res) => {
             console.log("Location exists: ", locationExists);
         }
 
+        // Store session info
+        req.session.userId = user.id;   
+        req.session.deviceID = device.id;
+        req.session.deviceId = deviceId;
+        req.session.ipAddressID = ip.id;
 
         if (!deviceExists || !ipExists || !locationExists) {
             const pin = generatePIN();
@@ -175,21 +180,16 @@ exports.handleLogin = async (req, res) => {
 
             await transporter.sendMail(mailOptions);
 
-            req.session.userId = user.id;
-            req.session.deviceID = device.id;
-            req.session.deviceId = deviceId;
-            req.session.ipAddressID = ip.id;
-
             // Redirect to verification page
             return res.redirect('/OTP');
         }
 
 
-        // If the device and IP are verified
+        // If the device and IP are verified, sign JWT
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_KEY,
-            { expiresIn: '60s' }
+            { expiresIn: '1h' }
         );
 
         res.cookie('token', token, { httpOnly: true });

@@ -14,9 +14,9 @@ const path = require('path');
 
 controller.getHomePage = async (req, res) => {
     try {
-        let {type, public, date} = req.query;
 
-        const user_id = 1;
+        let {type, public, date} = req.query;
+        const user_id = req.session.userId;
         //get all documents of user
         let documents = await db.Document.findAll({
             where: {
