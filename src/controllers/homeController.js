@@ -14,15 +14,51 @@ const path = require('path');
 
 controller.getHomePage = async (req, res) => {
     try {
+        let {type, public, date} = req.query;
+
         const user_id = 1;
         //get all documents of user
-        const documents = await db.Document.findAll({
+        let documents = await db.Document.findAll({
             where: {
                 user_id: user_id
             }
         });
+
+        let is_public = null;
+        if (public === 'Yes') {
+            is_public = true;
+        }
+        else if (public === 'No') {
+            is_public = false;
+        }
+
+        let file_format = null;
+        if (type){
+            file_format = getMimeType(type);
+        }
+
+        let date_range = null;
+        if (date){
+            date_range = parseInt(date);
+        }
+
+        //filter documents based on query parameters
+        if (type) {
+            documents = documents.filter(document => document.file_format === file_format);
+        }
+        if (is_public !== null) {
+            documents = documents.filter(document => document.is_public === is_public);
+        }
+        if (date_range) {
+            documents = documents.filter(document => document.created_date >= new Date(new Date().getTime() - date_range * 24 * 60 * 60 * 1000));
+        }
+
         //render homepage
         res.locals.documents = documents;
+        res.locals.type = type;
+        res.locals.public = public;
+        res.locals.date = date;
+
         // console.log(documents);
         res.render('home', {
             title: 'Home'
@@ -31,6 +67,47 @@ controller.getHomePage = async (req, res) => {
     catch (error) {
         console.error(error);
     }
+}
+
+const extensionToMimeType = {
+    'pdf': 'application/pdf',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'bmp': 'image/bmp',
+    'svg': 'image/svg+xml',
+    'ico': 'image/vnd.microsoft.icon',
+    'html': 'text/html',
+    'css': 'text/css',
+    'js': 'application/javascript',
+    'json': 'application/json',
+    'xml': 'application/xml',
+    'txt': 'text/plain',
+    'csv': 'text/csv',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'rtf': 'application/rtf',
+    'odt': 'application/vnd.oasis.opendocument.text',
+    'ods': 'application/vnd.oasis.opendocument.spreadsheet',
+    'odp': 'application/vnd.oasis.opendocument.presentation',
+    'zip': 'application/zip',
+    'rar': 'application/vnd.rar',
+    '7z': 'application/x-7z-compressed',
+    'mp3': 'audio/mpeg',
+    'wav': 'audio/wav',
+    'ogg': 'audio/ogg',
+    'mp4': 'video/mp4',
+    'avi': 'video/x-msvideo',
+    'mov': 'video/quicktime',
+    'wmv': 'video/x-ms-wmv',
+    'mpeg': 'video/mpeg'
+};
+
+// Function to get MIME type from file extension
+function getMimeType(extension) {
+    return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
 }
 
 
