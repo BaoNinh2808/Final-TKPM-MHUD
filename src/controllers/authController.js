@@ -114,6 +114,13 @@ exports.handleLogin = async (req, res) => {
         let device = await Device.findOne({ where: { device: deviceId } });
         let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
 
+        if (!device) {
+            device = await Device.create({ device: deviceId });
+        }
+        if (!ip) {
+            ip = await IPAddress.create({ ipAddress: ipAddress });
+        }
+
         let deviceExists = true;
         let ipExists = true;
         let locationExists = true;
