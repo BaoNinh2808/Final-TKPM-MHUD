@@ -37,24 +37,55 @@ controller.getHomePage = async (req, res) => {
 
 
 // Handle file upload
-controller.upload = upload.single('file');
+// controller.upload = upload.single('file');
+controller.upload = upload.fields([
+    { name: 'file', maxCount: 1 },
+    { name: 'iv', maxCount: 1 },
+    { name: 'salt', maxCount: 1 }
+]);
 
 // Handle file upload processing
 controller.handleUpload = async (req, res, next) => {
-    const file = req.file; // This will contain the file information
-    console.log("Received file:", file);
+    const files = req.files; // This will contain the file information
+    const body = req.body; // This will contain the non-file fields
+    
+    if (!files || !files.file || !files.iv || !files.salt) {
+        return res.status(400).json({ error: 'File, IV, and salt are required' });
+    }
+    if (!body.has_password || !body.is_public) {
+        return res.status(400).json({ error: 'has_password and is_public are required' });
+    }
+
+    const file = files.file[0];
+    const ivFile = files.iv[0];
+    const saltFile = files.salt[0];
+    
     const targetPath = path.join('uploads', file.originalname); // Adjust the path as needed
 
     const fileName = file.originalname;
     const fileFormat = file.mimetype; // MIME type (e.g., "image/png", "application/pdf")
     const fileSize = file.size; // File size in bytes
 
-    console.log(`
-    Name: ${fileName}
-    Format: ${fileFormat}
-    Size: ${fileSize} bytes`);
-
+    // console.log(`Name: ${fileName}\nFormat: ${fileFormat}\nSize: ${fileSize} bytes`);
     
+    // Read the IV and salt data
+    const iv = await fs.readFile(ivFile.path);
+    const salt = await fs.readFile(saltFile.path);
+
+    // console.log(`IV: ${iv.toString('hex')}`);
+    // console.log(`Salt: ${salt.toString('hex')}`);
+
+     // Access has_password and is_public from req.body
+     const hasPassword = body.has_password === 'true'; // Convert from string to boolean
+     const isPublic = body.is_public === 'true'; // Convert from string to boolean
+
+     let password = null;
+     if (!hasPassword) {
+            password = 'password';
+    }
+    //  console.log(`has_password: ${hasPassword}`);
+    //  console.log(`is_public: ${isPublic}`);
+
     try {
         // Create the uploads directory if it doesn't exist
         const targetDir = path.dirname(targetPath);
@@ -64,11 +95,11 @@ controller.handleUpload = async (req, res, next) => {
         const data = await fs.readFile(file.path);
         await fs.writeFile(targetPath, data);
 
-        console.log('File written to target path:', targetPath);
+        // console.log('File written to target path:', targetPath);
 
         // Upload file to IPFS
         const formData = new FormData();
-        formData.append('file', fsSync.createReadStream(targetPath));
+        formData.append('file', fsSync.createReadStream(file.path));
 
         const pinataMetadata = JSON.stringify({ name: file.originalname });
         formData.append('pinataMetadata', pinataMetadata);
@@ -95,14 +126,19 @@ controller.handleUpload = async (req, res, next) => {
                 user_id: 1,
                 file_format: fileFormat,
                 file_size: fileSize,
-                has_password: false,
-                password_hash: null,
-                is_public: true,
+                has_password: hasPassword,
+                password: password,
+                iv: iv.toString('hex'),
+                salt: salt.toString('hex'),
+                is_public: isPublic,
                 created_date: new Date()
             });
 
             // Delete the temporary file
             await fs.unlink(file.path);
+            await fs.unlink(ivFile.path);
+            await fs.unlink(saltFile.path);
+
             // console.log('Temporary file deleted:', file.path);
 
             // Delete the target file
@@ -164,6 +200,32 @@ controller.deleteFile = async (req, res) => {
             console.error('Failed to delete file:', response.status, response.statusText);
             res.status(500).json({ error: 'Failed to delete file' });
         }
+    }
+}
+
+controller.getFileInfo = async (req, res) => {
+    const fileName = req.body.fileName;
+    const cid = req.body.cid;
+    const user_id = 1;
+    //check if file exists in database
+    const document = await db.Document.findOne({
+        where: {
+            name: fileName,
+            user_id: user_id,
+            CID: cid
+        }
+    });
+
+    if (document) {
+        res.status(200).json({
+            iv: document.iv,
+            salt: document.salt,
+            has_password: document.has_password,
+        });
+        console.log("iv", document.iv);
+        console.log("salt", document.salt);
+    } else {
+        res.status(404).json({ error: 'File not found' });
     }
 }
 
