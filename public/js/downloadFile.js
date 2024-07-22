@@ -21,16 +21,6 @@ async function downFn(url, fileName, cid) {
     }
 
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error("Network Problem");
-        }
-        const file = await response.arrayBuffer();
-
-        const encryptedData = new Uint8Array(file);
-
-        console.log("retrive file", encryptedData);
-
         // Retrieve IV and salt from server
         const infoResponse = await fetch('/home/getFileInfo', {
             method: 'POST',
@@ -54,9 +44,18 @@ async function downFn(url, fileName, cid) {
         console.log("iv", iv);
         console.log("salt", salt);
 
-        // Decrypt the file
-        let password = "password";
+        // Decrypt the file if it is password-protected
         if (has_password) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Network Problem");
+            }
+            const file = await response.arrayBuffer();
+
+            const encryptedData = new Uint8Array(file);
+
+            console.log("retrive file", encryptedData);    
+            
             // trigger the modal for password
             const base64EncryptedData = uint8ArrayToBase64(encryptedData);
             document.getElementById('enterPassBtn').dataset.base64EncryptedData = base64EncryptedData;
@@ -67,7 +66,23 @@ async function downFn(url, fileName, cid) {
             modal.show();
         }
         else {
-            decryptDataAndDownload(encryptedData, iv, salt, fileName, password);
+            showRightBelowToast('Downloading File');
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Network Problem");
+            }
+            const file = await response.blob();
+
+            // decryptDataAndDownload(encryptedData, iv, salt, fileName, password);
+            let tUrl = URL.createObjectURL(file);
+            const tmp1 = document.createElement("a");
+            tmp1.href = tUrl;
+            tmp1.download = fileName;
+            document.body.appendChild(tmp1);
+            tmp1.click();
+            URL.revokeObjectURL(tUrl);
+            tmp1.remove();
         }
 
 

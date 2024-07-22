@@ -199,33 +199,64 @@ uploadButton.addEventListener('click', async () => {
         is_public = true;
     }
 
-    // console.log('password:', password);
+    if (is_public == true){
+        // call the modal to confirm public sharing
+        let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-public-sharing'));
+        modal.show();
+        const confirmPublicSharingButton = document.getElementById('confirmPublicSharingButton');
+        confirmPublicSharingButton.onclick = async () => {
+            // Hide the modal
+            modal.hide();
+            // call the upload function
+            uploadFile(file, null, false, true);
+        };
+    }
+    else {
+        uploadFile(file, password, has_password, is_public);
+    }
 
+});
+
+async function uploadFile(file, password, has_password, is_public) {
+    
     try {
-        // Disable the upload button
-        uploadButton.disabled = true;
-        uploadButton.textContent = 'Encrypting...';
-
-        const salt = crypto.getRandomValues(new Uint8Array(16));
-        const key = await deriveKey(password, salt);
-        const fileData = await file.arrayBuffer();
-        const { iv, encryptedData } = await encryptData(key, fileData);
-
-        console.log('Encrypted Data:', new Uint8Array(encryptedData));
-        console.log('IV:', iv);
-        console.log('Salt:', salt);
-
-        // Create a Blob from the encrypted data
-        const encryptedBlob = new Blob([encryptedData], { type: file.type });
-
-        // Create a FormData object and append the Blob
         const formData = new FormData();
-        formData.append('file', encryptedBlob, file.name);
-        formData.append('iv', new Blob([iv])); // Append the IV
-        formData.append('salt', new Blob([salt])); // Append the salt
-        formData.append('has_password', has_password.toString()); // Append as string
-        formData.append('is_public', is_public.toString()); // Append as string
+        if (has_password) {
+            // Disable the upload button
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Encrypting...';
 
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const key = await deriveKey(password, salt);
+            const fileData = await file.arrayBuffer();
+            const { iv, encryptedData } = await encryptData(key, fileData);
+
+            // console.log('Encrypted Data:', new Uint8Array(encryptedData));
+            // console.log('IV:', iv);
+            // console.log('Salt:', salt);
+
+            // Create a Blob from the encrypted data
+            const encryptedBlob = new Blob([encryptedData], { type: file.type });
+
+            // Create a FormData object and append the Blob
+            
+            formData.append('file', encryptedBlob, file.name);
+            formData.append('iv', new Blob([iv])); // Append the IV
+            formData.append('salt', new Blob([salt])); // Append the salt
+            formData.append('has_password', has_password.toString()); // Append as string
+            formData.append('is_public', is_public.toString()); // Append as string
+        }
+        else{
+            //create a random salt & IV
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+
+            formData.append('file', file);
+            formData.append('iv', new Blob([iv])); // Append the random value
+            formData.append('salt', new Blob([salt])); // Append the random value
+            formData.append('has_password', has_password.toString()); // Append as string
+            formData.append('is_public', is_public.toString()); // Append as string
+        }
         // Disable the upload button
         uploadButton.disabled = true;
         uploadButton.textContent = 'Uploading...';
@@ -267,4 +298,9 @@ uploadButton.addEventListener('click', async () => {
         console.error('Encryption failed:', error);
         showRightBelowToast(`<p class="color-red">Encryption failed: ${error.message}</p>`);
     }
-});
+
+    const isPublicInput = document.getElementById('publicSharingSelect');
+    isPublicInput.value = 'No';
+    const passwordInput = document.getElementById('passwordInput');
+    passwordInput.value = '';
+}

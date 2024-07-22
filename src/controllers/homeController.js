@@ -24,8 +24,7 @@ controller.getHomePage = async (req, res) => {
         //render homepage
         res.locals.documents = documents;
         // console.log(documents);
-        res.render('homepage', {
-            layout: false,
+        res.render('home', {
             title: 'Home'
         });
     }

@@ -1,0 +1,247 @@
+<div class="main-content"
+    style="background-color: #f3f4f8; display: flex; flex-direction: column; width: calc(100% - 120px);">
+    <div class="main-area flex-grow-1 px-3" style="min-height: 600px;">
+
+        <!-- title of project list -->
+        <div class="row align-items-center mt-3">
+            <div class="col-lg-2 col-4 fw-bold fs-4 color-deep-violet">
+                Public Files
+            </div>
+
+            <!-- add-project -->
+            <div class="col-lg-4 col-8">
+            </div>
+
+            <!-- filter -->
+            <div class="col-lg-6 col-12 d-none d-sm-block mt-sm-3 mt-lg-0">
+                <div class="row align-items-center">
+                    <div class="col d-block d-lg-none">
+
+                    </div>
+                    <div class="col-2 text-center pt-4">
+                        <span class="color-deep-violet fw-bold fs-5">Filter</span>
+                    </div>
+                    <div class="col-lg-3 col-3">
+                        <div>
+                            <div class="color-deep-violet fw-medium fs-6 mb-1">Type</div>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-file-type">
+                                <option selected></option>
+                                <option value="1">PDF</option>
+                                <option value="2">DOCX</option>
+                                <option value="3">XLSX</option>
+                                <option value="4">TXT</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-3">
+                        <div>
+                            <div class="color-deep-violet fw-medium fs-6 mb-1">Owner</div>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-public-file">
+                                <option selected></option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-3">
+                        <div>
+                            <div class="color-deep-violet fw-medium fs-6 mb-1">Created Date</div>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-created-date">
+                                <option selected></option>
+                                <option value="1">Today</option>
+                                <option value="2">Last 7 days</option>
+                                <option value="3">Last 30 days</option>
+                                <option value="4">This year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Files-->
+        <div class="row align-items-center mt-2">
+            <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                style="height: 100%; margin-right: -25px;">
+                <div class="fw-bold fs-6 color-deep-violet">
+                    Type
+                </div>
+            </div>
+
+            <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                <div class="row align-items-center">
+                    <div class="col col-sm-4">
+                        <div class="fw-bold fs-5 color-deep-violet">
+                            File Name
+                        </div>
+                    </div>
+
+                    <div class="col d-none d-lg-block text-center">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Size
+                        </div>
+                    </div>
+
+                    <div class="col text-center d-none d-sm-block">
+                        <div class="color-deep-violet" style="font-weight: 600;">
+                            Created Date
+                        </div>
+                    </div>
+
+                    <div class="col text-center d-none d-sm-block">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Action
+                        </div>
+                    </div>
+
+                    <div class="col col-lg-2 d-none d-md-block text-center">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Owner
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download -->
+            <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                <div class="fw-bold fs-6 color-deep-violet">
+                    Download
+                </div>
+            </div>
+        </div>
+
+        {{#each documents}}
+        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+            <div class="row align-items-center">
+                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                    style="height: 100%; margin-right: -25px;">
+                    <i class="{{mimeIcon file_format}} fs-3"></i>
+                </div>
+
+                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                    <div class="row align-items-center">
+                        <div class="col col-sm-4">
+                            <div class="fw-medium fs-5 color-deep-violet text-wrap">
+                                {{name}}
+                            </div>
+                        </div>
+
+                        <div class="col d-none d-lg-block text-center">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                {{formatBytes file_size}}
+                            </div>
+                        </div>
+
+                        <div class="col text-center d-none d-sm-block">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                {{formatDate created_date}}
+                            </div>
+                        </div>
+
+                        <div class="col text-center d-none d-sm-block">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                <i class="bi bi-share color-blue fs-5 pe-2" style="cursor: pointer;" data-cid="{{CID}}"
+                                    data-bs-toggle="modal" data-bs-target="#modal-share-file"></i>
+                            </div>
+                        </div>
+
+                        <div class="col col-lg-2 d-none d-md-block text-center">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                Bao Ninh
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download -->
+                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                    <div class="download hover-to-bg-light-violet clickable" data-cid="{{CID}}"
+                        data-file-name="{{name}}">
+                        <i class="bi bi-cloud-download color-blue d-none d-md-block" style="font-size: 18pt;"></i>
+                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+{{#block "modal"}}
+
+
+<div class="modal fade" id="modal-share-file" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content align-items-center fw-bold color-deep-violet primary-background"
+            style="padding: 0 6%;">
+            <div class="modal-header" style="border-bottom: none;">
+                <p class="modal-title fs-3" id="modalTitleId">
+                    Share Your File
+                </p>
+            </div>
+            <div class="modal-body" style="border-bottom: none; width: 100%;">
+                <div class="row mb-3">
+                    <div class="col">
+                        <p class="color-black fw-medium mb-1">Share this link with anyone you want to grant access
+                            to your file.</p>
+                        <p class="color-black fw-medium mt-0">Anyone with this link can view your file by opening it
+                            in their browser.</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="sharing-link-box">
+                        <p class="sharing-link mb-0">my link</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: none;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="copyLinkBtn">Copy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-enter-password" tabindex="-1" role="dialog" aria-labelledby="modalTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content align-items-center fw-bold color-deep-violet primary-background"
+            style="padding: 0 6%;">
+            <div class="modal-header" style="border-bottom: none;">
+                <p class="modal-title fs-3" id="modalTitleId">
+                    Enter Password
+                </p>
+            </div>
+            <div class="modal-body" style="border-bottom: none; width: 100%;">
+                <div class="color-deep-violet fw-bold fs-6 mb-1">File Password</div>
+                <div class="position-relative">
+                    <input type="password" class="form-control" id="decryptPasswordInput"
+                        placeholder="Enter Your Password">
+                    <i class="fas fa-eye position-absolute" id="toggleDecryptPassword"
+                        style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: none;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="enterPassBtn">Get File</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{/block}}
+
+
+{{#block "script"}}
+<script src="/js/shareLink.js"></script>
+<script src="/js/downloadFile.js"></script>
+<script src="/js/encryptFile.js"></script>
+{{/block}}
