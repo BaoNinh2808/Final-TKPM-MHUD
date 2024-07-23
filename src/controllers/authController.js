@@ -160,6 +160,7 @@ exports.handleLogin = async (req, res) => {
         req.session.deviceID = device.id;
         req.session.deviceId = deviceId;
         req.session.ipAddressID = ip.id;
+        req.session.user = user;
 
         if (!deviceExists || !ipExists || !locationExists) {
             const pin = generatePIN();
@@ -221,6 +222,7 @@ exports.verifyPIN = async (req, res) => {
         const deviceId = req.session.deviceId;
         const deviceID = req.session.deviceID;
         const ipAddressID = req.session.ipAddressID;
+        const user = req.session.user;
 
         console.log(userId);
         if (!userId) {
@@ -245,7 +247,14 @@ exports.verifyPIN = async (req, res) => {
         if (!userIP) {
             await UserIPAddress.create({ userID: userId, ipAddressID:   ipAddressID });
         }
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            process.env.JWT_KEY,
+            { expiresIn: '1h' }
+        );
 
+        res.cookie('token', token, { httpOnly: true });
+        res.cookie('isLogged', true);
         // Redirect to home
         return res.redirect('/home');
     } catch (error) {
