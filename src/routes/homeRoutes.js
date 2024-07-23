@@ -12,8 +12,8 @@ const ensureLoginMiddleware = require('../middleware/ensureLoginMiddleware');
 
 router.get('/', ensureLoginMiddleware, controller.getHomePage);
 // router.put('/', authMiddleware,controller.upload, controller.handleUpload);
-router.put('/', ensureLoginMiddleware, controller.upload, controller.handleUpload);
-router.delete('/', ensureLoginMiddleware, controller.deleteFile);
-router.post('/getFileInfo', ensureLoginMiddleware, controller.getFileInfo);
+router.put('/', authMiddleware, controller.upload, controller.handleUpload);
+router.delete('/', authMiddleware, controller.deleteFile);
+router.post('/getFileInfo', authMiddleware, controller.getFileInfo);
 
 module.exports = router;
