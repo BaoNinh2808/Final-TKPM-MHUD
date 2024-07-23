@@ -114,6 +114,13 @@ exports.handleLogin = async (req, res) => {
         let device = await Device.findOne({ where: { device: deviceId } });
         let ip = await IPAddress.findOne({ where: { ipAddress: ipAddress } });
 
+        if (!device) {
+            device = await Device.create({ device: deviceId });
+        }
+        if (!ip) {
+            ip = await IPAddress.create({ ipAddress: ipAddress });
+        }
+
         let deviceExists = true;
         let ipExists = true;
         let locationExists = true;
@@ -148,6 +155,11 @@ exports.handleLogin = async (req, res) => {
             console.log("Location exists: ", locationExists);
         }
 
+        // Store session info
+        req.session.deviceID = device.id;
+        req.session.deviceId = deviceId;
+        req.session.ipAddressID = ip.id;
+        req.session.user = user;
 
         if (!deviceExists || !ipExists || !locationExists) {
             const pin = generatePIN();
@@ -168,24 +180,20 @@ exports.handleLogin = async (req, res) => {
 
             await transporter.sendMail(mailOptions);
 
-            req.session.userId = user.id;
-            req.session.deviceID = device.id;
-            req.session.deviceId = deviceId;
-            req.session.ipAddressID = ip.id;
-
             // Redirect to verification page
             return res.redirect('/OTP');
         }
 
 
-        // If the device and IP are verified
+        // If the device and IP are verified, sign JWT
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_KEY,
-            { expiresIn: '60s' }
+            { expiresIn: '1h' }
         );
 
         res.cookie('token', token, { httpOnly: true });
+        res.cookie('isLogged', true);
         
         return res.redirect('/home');
     } catch (error) {
@@ -209,11 +217,11 @@ function generatePIN() {
 exports.verifyPIN = async (req, res) => {
     try {
         const { pin } = req.body;
-        const userId = req.session.userId;
         const deviceId = req.session.deviceId;
         const deviceID = req.session.deviceID;
         const ipAddressID = req.session.ipAddressID;
-
+        const user = req.session.user;
+        const userId = user.id;
         console.log(userId);
         if (!userId) {
             return res.status(400).json({ error: 'User ID not found in session' });
@@ -237,7 +245,13 @@ exports.verifyPIN = async (req, res) => {
         if (!userIP) {
             await UserIPAddress.create({ userID: userId, ipAddressID:   ipAddressID });
         }
-
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            process.env.JWT_KEY,
+            { expiresIn: '1h' }
+        );
+        res.cookie('token', token, { httpOnly: true });
+        res.cookie('isLogged', true);
         // Redirect to home
         return res.redirect('/home');
     } catch (error) {
@@ -294,5 +308,18 @@ exports.resendPIN = async (req, res) => {
     } catch (error) {
         console.error('Error resending PIN:', error);
         return res.status(500).json({ error: 'An error occurred while resending OTP. Please try again later.' });
+    }
+}
+
+exports.logout = (req, res) => {
+    try {
+        req.session.destroy();
+        res.clearCookie('token', { path: '/' });
+        res.clearCookie('isLogged', { path: '/' });
+        res.redirect('/login');
+    }
+    catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ error: 'An error occurred while logging out. Please try again later.' });
     }
 }

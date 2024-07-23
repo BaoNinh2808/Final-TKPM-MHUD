@@ -39,7 +39,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    password_hash: {
+    password: {
+      type: DataTypes.STRING,
+    },
+    random_server: {
+      type: DataTypes.STRING,
+    },
+    iv:{
+      type: DataTypes.STRING,
+    },
+    salt:{
       type: DataTypes.STRING,
     },
     is_public:{

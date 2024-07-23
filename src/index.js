@@ -63,6 +63,16 @@ app.engine(
                 allowProtoPropertiesByDefault: true,
             },
             helpers : {
+                // Helper 'block'
+                block: function (name, options) {
+                    if (!this._blocks) this._blocks = {};
+                    this._blocks[name] = options.fn(this);
+                    return null;
+                },
+                // Helper 'content'
+                content: function (name) {
+                    return (this._blocks && this._blocks[name]) ? this._blocks[name] : null;
+                },
                 formatDate: (date) => {
                     return moment(date).format('DD/MM/YYYY');
                 },
@@ -146,6 +156,7 @@ app.get('/otp', (req, res) => {
 // console.log(__dirname);
 app.use('/home', require('./routes/homeRoutes'));
 
+app.use('/public',  require('./routes/publicRoutes'));
 
 app.use('/upload', require('./routes/uploadRoutes'));
 
