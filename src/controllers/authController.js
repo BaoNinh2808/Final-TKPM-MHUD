@@ -102,13 +102,17 @@ exports.handleLogin = async (req, res) => {
         // Kiem tra user
         const user = await User.findOne({ where: { email } });
         if (!user) {
-            return res.redirect('/login');
+            // return res.redirect('/login');
+
+            return res.status(400).json({ error: 'Email or password incorrect' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            console.log("Authentication failed");
-            return res.redirect('/login');
+            // console.log("Authentication failed");
+            // return res.redirect('/login');
+
+            return res.status(400).json({ error: 'Email or password incorrect' });
         }
 
         let device = await Device.findOne({ where: { device: deviceId } });
@@ -127,12 +131,12 @@ exports.handleLogin = async (req, res) => {
 
         if (config.conditions.device) {
             deviceExists = await UserDevice.findOne({ where : { userID: user.id, deviceID: device.id } });
-            console.log("Device exists: ", deviceExists);
+            // console.log("Device exists: ", deviceExists);
         }
 
         if (config.conditions.ipAddress) {
             ipExists = await UserIPAddress.findOne({ where : { userID: user.id, ipAddressID: ip.id } });
-            console.log("IP exists: ", ipExists);
+            // console.log("IP exists: ", ipExists);
         }
 
 
@@ -152,7 +156,7 @@ exports.handleLogin = async (req, res) => {
                     break;
                 }
             }
-            console.log("Location exists: ", locationExists);
+            // console.log("Location exists: ", locationExists);
         }
 
         // Store session info
@@ -198,7 +202,8 @@ exports.handleLogin = async (req, res) => {
         return res.redirect('/home');
     } catch (error) {
         console.error(error);
-        return res.redirect('/login');
+        // return res.redirect('/login');
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
