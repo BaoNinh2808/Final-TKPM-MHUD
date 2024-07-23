@@ -112,21 +112,6 @@ function extFn(url) {
 }
 
 
-function hexToUint8Array(hex) {
-    // Ensure the hex string is in uppercase and remove any whitespace
-    hex = hex.toUpperCase().replace(/\s+/g, '');
-
-    // Create a new Uint8Array with half the length of the hex string
-    const byteArray = new Uint8Array(hex.length / 2);
-
-    // Loop through the hex string and populate the Uint8Array
-    for (let i = 0; i < byteArray.length; i++) {
-        byteArray[i] = parseInt(hex.substr(i * 2, 2), 16);
-    }
-
-    return byteArray;
-}
-
 async function decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password) {
     try {
         showRightBelowToast('Decrypting File');
@@ -160,36 +145,40 @@ async function decryptDataAndDownload(encryptedData, iv, salt, random_server, fi
     }
 }
 
-document.getElementById('enterPassBtn').addEventListener('click', async () => {
-    const password = document.getElementById('decryptPasswordInput').value.trim();
-    const encryptedData = base64ToUint8Array(document.getElementById('enterPassBtn').dataset.base64EncryptedData);
-    const iv = hexToUint8Array(document.getElementById('enterPassBtn').dataset.ivHex);
-    const salt = hexToUint8Array(document.getElementById('enterPassBtn').dataset.saltHex);
-    const fileName = document.getElementById('enterPassBtn').dataset.fileName;
-    const random_server = document.getElementById('enterPassBtn').dataset.random_server;
+if (document.getElementById('enterPassBtn')){
+    document.getElementById('enterPassBtn').addEventListener('click', async () => {
+        const password = document.getElementById('decryptPasswordInput').value.trim();
+        const encryptedData = base64ToUint8Array(document.getElementById('enterPassBtn').dataset.base64EncryptedData);
+        const iv = hexToUint8Array(document.getElementById('enterPassBtn').dataset.ivHex);
+        const salt = hexToUint8Array(document.getElementById('enterPassBtn').dataset.saltHex);
+        const fileName = document.getElementById('enterPassBtn').dataset.fileName;
+        const random_server = document.getElementById('enterPassBtn').dataset.random_server;
 
-    console.log("password", password.toString());
-    console.log("encryptedData",encryptedData);
-    console.log("iv",iv);
-    console.log("salt",salt);
-    console.log("fileName",fileName);
-    console.log("random_server",random_server);
+        console.log("password", password.toString());
+        console.log("encryptedData",encryptedData);
+        console.log("iv",iv);
+        console.log("salt",salt);
+        console.log("fileName",fileName);
+        console.log("random_server",random_server);
 
-    decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
+        decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
 
-    console.log("download success");
-    //clear data in input field
-    document.getElementById('decryptPasswordInput').value = '';
-    let modal = bootstrap.Modal.getInstance(document.getElementById('modal-enter-password'));
-    modal.hide();
-});
+        console.log("download success");
+        //clear data in input field
+        document.getElementById('decryptPasswordInput').value = '';
+        let modal = bootstrap.Modal.getInstance(document.getElementById('modal-enter-password'));
+        modal.hide();
+    });
+}
 
-document.getElementById('toggleDecryptPassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('decryptPasswordInput');
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-
-    // Toggle the eye slash icon
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-});
+if (document.getElementById('toggleDecryptPassword')){
+    document.getElementById('toggleDecryptPassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('decryptPasswordInput');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    
+        // Toggle the eye slash icon
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+}

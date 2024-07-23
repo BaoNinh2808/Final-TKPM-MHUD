@@ -64,3 +64,18 @@ function arrayBufferToBase64(buffer) {
     }
     return btoa(binary);
 }
+
+function hexToUint8Array(hex) {
+    // Ensure the hex string is in uppercase and remove any whitespace
+    hex = hex.toUpperCase().replace(/\s+/g, '');
+
+    // Create a new Uint8Array with half the length of the hex string
+    const byteArray = new Uint8Array(hex.length / 2);
+
+    // Loop through the hex string and populate the Uint8Array
+    for (let i = 0; i < byteArray.length; i++) {
+        byteArray[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+
+    return byteArray;
+}
