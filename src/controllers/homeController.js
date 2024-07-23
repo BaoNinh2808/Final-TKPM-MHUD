@@ -326,11 +326,14 @@ controller.getFileInfo = async (req, res) => {
             iv: document.iv,
             salt: document.salt,
             has_password: document.has_password,
+            password: document.password,
+            random_server: document.random_server,
+            is_public: document.is_public
         });
         console.log("iv", document.iv);
         console.log("salt", document.salt);
     } else {
-        res.status(404).json({ error: 'File not found' });
+        res.status(404).json({ error: 'There is no document have the corresponding data in system' });
     }
 }
 

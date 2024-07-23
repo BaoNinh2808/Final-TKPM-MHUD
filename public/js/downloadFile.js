@@ -37,15 +37,21 @@ async function downFn(url, fileName, cid) {
         const ivHex = data.iv;
         const saltHex = data.salt;
         const has_password = data.has_password;
+        const password = data.password;
+        const random_server = data.random_server;
+        const is_public = data.is_public;
 
-        const iv = hexToUint8Array(ivHex);
-        const salt = hexToUint8Array(saltHex);
-
-        console.log("iv", iv);
-        console.log("salt", salt);
+        
 
         // Decrypt the file if it is password-protected
-        if (has_password) {
+        if (is_public === false) {
+            showRightBelowToast('Downloading File');
+            const iv = hexToUint8Array(ivHex);
+            const salt = hexToUint8Array(saltHex);
+
+            console.log("iv", iv);
+            console.log("salt", salt);
+
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error("Network Problem");
@@ -56,16 +62,24 @@ async function downFn(url, fileName, cid) {
 
             console.log("retrive file", encryptedData);    
             
-            // trigger the modal for password
-            const base64EncryptedData = uint8ArrayToBase64(encryptedData);
-            document.getElementById('enterPassBtn').dataset.base64EncryptedData = base64EncryptedData;
-            document.getElementById('enterPassBtn').dataset.ivHex = ivHex;
-            document.getElementById('enterPassBtn').dataset.saltHex = saltHex;
-            document.getElementById('enterPassBtn').dataset.fileName = fileName;
-            let modal = new bootstrap.Modal(document.getElementById('modal-enter-password'));
-            modal.show();
+            // if has password
+            if (has_password === true) {
+                // trigger the modal for password
+                const base64EncryptedData = uint8ArrayToBase64(encryptedData);
+                document.getElementById('enterPassBtn').dataset.base64EncryptedData = base64EncryptedData;
+                document.getElementById('enterPassBtn').dataset.ivHex = ivHex;
+                document.getElementById('enterPassBtn').dataset.saltHex = saltHex;
+                document.getElementById('enterPassBtn').dataset.fileName = fileName;
+                document.getElementById('enterPassBtn').dataset.random_server = random_server;
+                let modal = new bootstrap.Modal(document.getElementById('modal-enter-password'));
+                modal.show();
+            }
+            else {
+                decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
+            }
         }
         else {
+            //file not encrypt, just download it
             showRightBelowToast('Downloading File');
             
             const response = await fetch(url);
@@ -165,10 +179,11 @@ function base64ToArrayBuffer(base64) {
     return bytes.buffer;
 }
 
-async function decryptDataAndDownload(encryptedData, iv, salt, fileName, password) {
+async function decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password) {
     try {
-        showRightBelowToast('Downloading File');
-        const key = await deriveKey(password, salt);
+        showRightBelowToast('Decrypting File');
+        const concat_password = password + random_server;
+        const key = await deriveKey(concat_password, salt);
         console.log("key", key);
         
         const decryptedData = await decryptData(key, iv, encryptedData);
@@ -203,14 +218,16 @@ document.getElementById('enterPassBtn').addEventListener('click', async () => {
     const iv = hexToUint8Array(document.getElementById('enterPassBtn').dataset.ivHex);
     const salt = hexToUint8Array(document.getElementById('enterPassBtn').dataset.saltHex);
     const fileName = document.getElementById('enterPassBtn').dataset.fileName;
+    const random_server = document.getElementById('enterPassBtn').dataset.random_server;
 
     console.log("password", password.toString());
     console.log("encryptedData",encryptedData);
     console.log("iv",iv);
     console.log("salt",salt);
     console.log("fileName",fileName);
+    console.log("random_server",random_server);
 
-    decryptDataAndDownload(encryptedData, iv, salt, fileName, password);
+    decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
 
     console.log("download success");
     //clear data in input field
