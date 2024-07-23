@@ -80,8 +80,7 @@ exports.handleRegister = async (req, res) => {
                     locationID: location.id
                 });
             }
-
-            return res.redirect('/login');
+            return res.status(200).json({ success: true });
         }
     } catch (error) {
         console.error('Error during registration:', error);
@@ -199,7 +198,8 @@ exports.handleLogin = async (req, res) => {
         res.cookie('token', token, { httpOnly: true });
         res.cookie('isLogged', true);
         res.cookie('userID', user.id);
-        return res.redirect('/home');
+
+        return res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
         // return res.redirect('/login');

@@ -26,6 +26,14 @@
             height: 100vh; /* Ensure full viewport height coverage */
             margin: 0; /* Remove default margin */
         }
+
+        .toast-container {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -37,7 +45,6 @@
     <main>
         <div class="card centered-card container py-3">
             <h5 class="text-center mb-3"><strong>Register your account</strong></h5>
-            
             <form class="container ps-5 pe-5" id="registerForm">
                 <div class="mb-3">
                     <label for="input-name" class="form-label">Name</label>
@@ -82,6 +89,18 @@
             </div>
         </div>
     </main>
+
+    <div class="toast-container">
+        <div id="success-toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Registration successful! Redirecting to login page...
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <!-- Footer -->
         <!-- You can add your footer here if needed -->
@@ -115,40 +134,39 @@
             const latitude = data.lat;
             const longitude = data.lon;
 
-
             const form = document.getElementById('registerForm');
-                if (form) {
-                    const deviceInput = form.querySelector('input[name="deviceId"]');
-                    const ipInput = form.querySelector('input[name="ipAddress"]');
-                    const latitudeInput = form.querySelector('input[name="latitude"]');
-                    const longitudeInput = form.querySelector('input[name="longitude"]');
+            if (form) {
+                const deviceInput = form.querySelector('input[name="deviceId"]');
+                const ipInput = form.querySelector('input[name="ipAddress"]');
+                const latitudeInput = form.querySelector('input[name="latitude"]');
+                const longitudeInput = form.querySelector('input[name="longitude"]');
 
-                    if (deviceInput) {
-                        deviceInput.value = deviceId;
-                    } else {
-                        console.error('Device input not found');
-                    }
-
-                    if (ipInput) {
-                        ipInput.value = ipAddress;
-                    } else {
-                        console.error('IP input not found');
-                    }
-
-                    if (latitudeInput) {
-                        latitudeInput.value = latitude;
-                    } else {
-                        console.error('latitude input not found');
-                    }
-
-                    if (longitude) {
-                        longitudeInput.value = longitude;
-                    } else {
-                        console.error('longitude input not found');
-                    }
+                if (deviceInput) {
+                    deviceInput.value = deviceId;
                 } else {
-                    console.error('Form not found');
+                    console.error('Device input not found');
                 }
+
+                if (ipInput) {
+                    ipInput.value = ipAddress;
+                } else {
+                    console.error('IP input not found');
+                }
+
+                if (latitudeInput) {
+                    latitudeInput.value = latitude;
+                } else {
+                    console.error('latitude input not found');
+                }
+
+                if (longitudeInput) {
+                    longitudeInput.value = longitude;
+                } else {
+                    console.error('longitude input not found');
+                }
+            } else {
+                console.error('Form not found');
+            }
         } catch (error) {
             console.error('Error:', error);
         }
@@ -161,7 +179,7 @@
             formData.forEach((value, key) => formObject[key] = value);
 
             try {
-                const response = await fetch(this.action, {
+                const response = await fetch('/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -172,7 +190,11 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    window.location.href = '/login';
+                    const successToast = new bootstrap.Toast(document.getElementById('success-toast'));
+                    successToast.show();
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
                 } else {
                     const errorElement = document.getElementById('issue-assign-error-2');
                     errorElement.style.display = 'block';
