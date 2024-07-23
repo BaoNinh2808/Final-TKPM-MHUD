@@ -15,5 +15,6 @@ router.get('/', ensureLoginMiddleware, controller.getHomePage);
 router.put('/', ensureLoginMiddleware, controller.upload, controller.handleUpload);
 router.delete('/', ensureLoginMiddleware, controller.deleteFile);
 router.post('/getFileInfo', ensureLoginMiddleware, controller.getFileInfo);
+router.get('/getServerRandom', ensureLoginMiddleware, controller.getServerRandom);
 
 module.exports = router;
