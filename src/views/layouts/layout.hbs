@@ -155,6 +155,45 @@
             <div class="toast-body"></div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = getCookie('isLogged');
+            console.log('isLoggedIn:', isLoggedIn);
+            if (!isLoggedIn) {
+                window.location.href = '/';
+            }
+        });
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
+    <script>
+        function logout() {
+            console.log('Logging out');
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Logout successful');
+                    document.cookie = 'isLogged=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                    window.location.href = "/";
+                } else {
+                    console.error('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 
 

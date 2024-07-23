@@ -193,6 +193,7 @@ exports.handleLogin = async (req, res) => {
         );
 
         res.cookie('token', token, { httpOnly: true });
+        res.cookie('isLogged', true);
         
         return res.redirect('/home');
     } catch (error) {
@@ -301,5 +302,18 @@ exports.resendPIN = async (req, res) => {
     } catch (error) {
         console.error('Error resending PIN:', error);
         return res.status(500).json({ error: 'An error occurred while resending OTP. Please try again later.' });
+    }
+}
+
+exports.logout = (req, res) => {
+    try {
+        req.session.destroy();
+        res.clearCookie('token', { path: '/' });
+        res.clearCookie('isLogged', { path: '/' });
+        res.redirect('/login');
+    }
+    catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ error: 'An error occurred while logging out. Please try again later.' });
     }
 }
