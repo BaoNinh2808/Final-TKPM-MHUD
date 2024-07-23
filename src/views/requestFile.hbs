@@ -1,0 +1,251 @@
+{{!-- <div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-3"
+        style="background-color: #f3f4f8; width: calc(100% - 120px);">
+        <h1>REQUEST FILE</h1>
+        <button class="btn btn-primary">New Request</button>
+        
+        </div>
+
+</div> --}}
+
+<style>
+    .btn-custom-right {
+        background-color: #d7d5ff;
+        color: #000000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+    .btn-custom-right.active {
+        border: 0.5px solid black;
+    }
+
+    .modal-dialog-custom {
+        max-width: 60%;
+    }
+    .form-control-custom {
+        width: 100%;
+    }
+    .modal-body form {
+        width: 100%;
+    }
+    .border{
+        border: 0.5px solid #EDECFE;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="main-content"
+    style="background-color: #f3f4f8; display: flex; flex-direction: column; width: calc(100% - 120px); padding-top: 20px">
+    <div class="main-area flex-grow-1" style="min-height: 600px; padding-left: 3rem; padding-right:1rem;">
+
+        <!-- title of project list -->
+        <div class="row align-items-center mt-3">
+            <div class="col-lg-2 col-4 fw-bold fs-4 color-deep-violet">
+                REQUEST FILE
+            </div>
+        </div>
+            
+        <div class="row align-items-center mt-3">
+            <div class="col-lg-12 d-flex align-items-center" style="display: flex; flex-direction:column;">
+                {{!-- Button left --}}
+                <div class="d-flex" style="width: 100%;">
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#newRequestModal">New Request</button>
+                </div>
+
+                {{!-- Buttons right --}}
+                <div class="d-flex" style="justify-content: flex-end; width: 100%;">
+                    <button class="btn btn-custom-right active" style="margin-right: 20px;" onclick="selectButton(this)">ALL</button>
+                    <button class="btn btn-custom-right" style="margin-right: 20px;" onclick="selectButton(this)">OPENED</button>
+                    <button class="btn btn-custom-right" onclick="selectButton(this)">CLOSED</button>
+                </div>
+
+                <hr style="width: 100%;">
+            </div>
+        </div>
+
+        {{!-- Modal --}}
+        <div class="modal fade" id="newRequestModal" tabindex="-1" aria-labelledby="newRequestModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-custom">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5>Create new request</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="requestTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control form-control-custom" id="requestTitle" placeholder="Explain what the request is for">
+                            </div>
+                            <div class="mb-3">
+                                <label for="requestDescription" class="form-label">Decription (optional)</label>
+                                <textarea class="form-control form-control-custom" id="requestDescription" rows="4" placeholder="Add any extra details about the request"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="requestFolder" class="form-label">Folder for uploaded files</label>
+                                <div class="d-flex justify-content-between align-items-center border p-2">
+                                    <div class="request-folder-name">
+                                        <i class="bi bi-folder-fill"></i>
+                                        File request
+                                    </div>
+                                    <a href="#" id="changeFolderLink" class="text-primary">Change Folder</a>
+                                </div>
+                            </div>
+                            <div class="mb-1 form-check">
+                                <input type="checkbox" class="form-check-input" id="setDeadline">
+                                <label class="form-check-label" for="setDeadline">Set a deadline</label>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col">
+                                    <label for="deadlineDate" class="form-label">Deadline date</label>
+                                    <input type="date" class="form-control" id="deadlineDate">
+                                </div>
+                                <div class="col">
+                                    <label for="deadlineTime" class="form-label">Deadline time</label>
+                                    <input type="time" class="form-control" id="deadlineTime">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-dark">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--Files-->
+        <div class="row align-items-center mt-2">
+            <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                style="height: 100%; margin-right: -25px;">
+                <div class="fw-bold fs-6 color-deep-violet">
+                    Type
+                </div>
+            </div>
+
+            <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                <div class="row align-items-center">
+                    <div class="col col-sm-4">
+                        <div class="fw-bold fs-5 color-deep-violet">
+                            File Name
+                        </div>
+                    </div>
+
+                    <div class="col d-none d-lg-block text-center">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Size
+                        </div>
+                    </div>
+
+                    <div class="col text-center d-none d-sm-block">
+                        <div class="color-deep-violet" style="font-weight: 600;">
+                            Created Date
+                        </div>
+                    </div>
+
+                    <div class="col text-center d-none d-sm-block">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Action
+                        </div>
+                    </div>
+
+                    <div class="col col-lg-2 d-none d-md-block text-center">
+                        <div class="fw-bold fs-6 color-deep-violet">
+                            Owner
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download -->
+            <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                <div class="fw-bold fs-6 color-deep-violet">
+                    Download
+                </div>
+            </div>
+        </div>
+
+        {{#each documents}}
+        <div class="full-width-box white-background p-1 hover-shadow-box mt-1">
+            <div class="row align-items-center">
+                <div class="col-1 d-flex align-items-center d-none d-lg-block text-center"
+                    style="height: 100%; margin-right: -25px;">
+                    <i class="{{mimeIcon file_format}} fs-3"></i>
+                </div>
+
+                <div class="col-md-9 col-9" style="flex-grow: 1;">
+
+                    <div class="row align-items-center">
+                        <div class="col col-sm-4">
+                            <div class="fw-medium fs-5 color-deep-violet text-wrap">
+                                {{name}}
+                            </div>
+                        </div>
+
+                        <div class="col d-none d-lg-block text-center">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                {{formatBytes file_size}}
+                            </div>
+                        </div>
+
+                        <div class="col text-center d-none d-sm-block">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                {{formatDate created_date}}
+                            </div>
+                        </div>
+
+                        <div class="col text-center d-none d-sm-block">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                <i class="bi bi-share color-blue fs-5 pe-2" style="cursor: pointer;" data-cid="{{CID}}"
+                                    data-bs-toggle="modal" data-bs-target="#modal-share-file"></i>
+                            </div>
+                        </div>
+
+                        <div class="col col-lg-2 d-none d-md-block text-center">
+                            <div class="fw-medium fs-5 color-deep-violet">
+                                Bao Ninh
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download -->
+                <div class="col-3 col-sm-2 p-2 d-flex align-items-center" style="height: 100%;">
+                    <div class="download hover-to-bg-light-violet clickable" data-cid="{{CID}}"
+                        data-file-name="{{name}}">
+                        <i class="bi bi-cloud-download color-blue d-none d-md-block" style="font-size: 18pt;"></i>
+                        <span class="color-blue fs-6 fw-medium ps-2 text-center">Download</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+
+{{#block "script"}}
+<script>
+    function selectButton(button){
+        var buttons = document.querySelectorAll('.btn-custom-right');
+        buttons.forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+
+
+        button.classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.btn-custom-right.active').click();
+    });
+</script>
+{{/block}}
+
+
+
