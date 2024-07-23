@@ -18,7 +18,7 @@ controller.getHomePage = async (req, res) => {
     try {
 
         let {type, public, date} = req.query;
-        const user_id = req.session.userId;
+        const user_id = req.session.user.id;
         //get all documents of user
         let documents = await db.Document.findAll({
             where: {

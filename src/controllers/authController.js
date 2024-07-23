@@ -156,7 +156,6 @@ exports.handleLogin = async (req, res) => {
         }
 
         // Store session info
-        req.session.userId = user.id;   
         req.session.deviceID = device.id;
         req.session.deviceId = deviceId;
         req.session.ipAddressID = ip.id;
@@ -218,12 +217,11 @@ function generatePIN() {
 exports.verifyPIN = async (req, res) => {
     try {
         const { pin } = req.body;
-        const userId = req.session.userId;
         const deviceId = req.session.deviceId;
         const deviceID = req.session.deviceID;
         const ipAddressID = req.session.ipAddressID;
         const user = req.session.user;
-
+        const userId = user.id;
         console.log(userId);
         if (!userId) {
             return res.status(400).json({ error: 'User ID not found in session' });
@@ -252,7 +250,6 @@ exports.verifyPIN = async (req, res) => {
             process.env.JWT_KEY,
             { expiresIn: '1h' }
         );
-
         res.cookie('token', token, { httpOnly: true });
         res.cookie('isLogged', true);
         // Redirect to home
