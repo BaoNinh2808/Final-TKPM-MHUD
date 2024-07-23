@@ -74,16 +74,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="newRequestForm">
+                        <form id="newRequestForm" action="/request-file/submit" method="POST">
                             <div class="mb-3">
                                 <label for="requestTitle" class="form-label">Title</label>
-                                <input type="text" class="form-control form-control-custom" id="requestTitle" placeholder="Explain what the request is for">
+                                <input type="text" class="form-control form-control-custom" id="requestTitle" name="title" placeholder="Explain what the request is for">
                             </div>
                             <div class="mb-3">
-                                <label for="requestDescription" class="form-label">Decription (optional)</label>
-                                <textarea class="form-control form-control-custom" id="requestDescription" rows="4" placeholder="Add any extra details about the request"></textarea>
+                                <label for="requestDescription" class="form-label">Description (optional)</label>
+                                <textarea class="form-control form-control-custom" id="requestDescription" rows="4" name="description" placeholder="Add any extra details about the request"></textarea>
                             </div>
-                            <div class="mb-3">
+                            {{!-- <div class="mb-3">
                                 <label for="requestFolder" class="form-label">Folder for uploaded files</label>
                                 <div class="d-flex justify-content-between align-items-center border p-2">
                                     <div class="request-folder-name">
@@ -92,24 +92,24 @@
                                     </div>
                                     <a href="#" id="changeFolderLink" class="text-primary">Change Folder</a>
                                 </div>
-                                <input type="hidden" id="requestFolder" value="File request">
-                            </div>
+                                <input type="hidden" id="requestFolder" name="folder" value="File request">
+                            </div> --}}
                             <div class="mb-3">
                                 <label for="requestEmails" class="form-label">Recipient Emails</label>
-                                <input type="email" class="form-control form-control-custom" id="requestEmails" placeholder="Enter recipient emails">
+                                <input type="email" class="form-control form-control-custom" id="requestEmails" name="emails" placeholder="Enter recipient emails">
                             </div>
                             <div class="mb-1 form-check">
-                                <input type="checkbox" class="form-check-input" id="setDeadline">
+                                <input type="checkbox" class="form-check-input" name="setDeadline" id="setDeadline">
                                 <label class="form-check-label" for="setDeadline">Set a deadline</label>
                             </div>
                             <div class="mb-3 row">
                                 <div class="col">
                                     <label for="deadlineDate" class="form-label">Deadline date</label>
-                                    <input type="date" class="form-control" id="deadlineDate">
+                                    <input type="date" class="form-control" name="deadlineDate" id="deadlineDate">
                                 </div>
                                 <div class="col">
                                     <label for="deadlineTime" class="form-label">Deadline time</label>
-                                    <input type="time" class="form-control" id="deadlineTime">
+                                    <input type="time" class="form-control" name="deadlineTime" id="deadlineTime">
                                 </div>
                             </div>
                         </form>
@@ -257,54 +257,13 @@
         });
 
         document.getElementById('createRequestBtn').addEventListener('click', function(){
-            const title = document.getElementById('requestTitle').value;
-            const description = document.getElementById('requestDescription').value;
-            const emails = tagify.value.map(tag => tag.value);  // Get the Tagify value
-            const folder = document.getElementById('requestFolder').value;
-            const setDeadline = document.getElementById('setDeadline').checked;
-            const deadlineDate = document.getElementById('deadlineDate').value;
-            const deadlineTime = document.getElementById('deadlineTime').value;
-
-            if (title === '' || emails === '') {
-                alert('Title and recipient emails are required.');
-                return;
-            }
-
-            const requestData = {
-                title: title,
-                description: description,
-                emails: emails,
-                folder: folder,
-                setDeadline: setDeadline,
-                deadlineDate: deadlineDate,
-                deadlineTime: deadlineTime
-            };
-
-
-
-            console.log('Request Data:', requestData);
-            // You can send this requestData to your server via an AJAX request
-            // Example:
-            // fetch('/your-endpoint', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(requestData)
-            // })
-            // .then(response => response.json())
-            // .then(data => console.log(data))
-            // .catch(error => console.error('Error:', error));
-
-            // Close modal after submission
+            document.getElementById('newRequestForm').submit();
+            console.log("HELLO WORLD");
             $('#newRequestModal').modal('hide');
         });
 
         document.getElementById('newRequestModal').addEventListener('hidden.bs.modal', function() {
-            document.getElementById('newRequestForm');
-            if (form) {
-                form.reset();
-            }
+            document.getElementById('newRequestForm').reset();
             tagify.removeAllTags();
         });
     });
