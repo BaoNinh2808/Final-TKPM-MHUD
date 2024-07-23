@@ -194,7 +194,7 @@ exports.handleLogin = async (req, res) => {
 
         res.cookie('token', token, { httpOnly: true });
         res.cookie('isLogged', true);
-        
+        res.cookie('userID', user.id);
         return res.redirect('/home');
     } catch (error) {
         console.error(error);
@@ -252,6 +252,7 @@ exports.verifyPIN = async (req, res) => {
         );
         res.cookie('token', token, { httpOnly: true });
         res.cookie('isLogged', true);
+        res.cookie('userID', userId);
         // Redirect to home
         return res.redirect('/home');
     } catch (error) {
