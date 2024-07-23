@@ -52,7 +52,7 @@
                                     <option selected></option>
                                 {{/if}}
                                 {{#each users}}
-                                    <option value="{{name}}" {{#if (eq owner name)}} selected {{/if}}>{{name}}</option>
+                                    <option value="{{name}}" {{#if (eq ../owner name)}} selected {{/if}}>{{name}}</option>
                                 {{/each}}
                             </select>
                         </div>
