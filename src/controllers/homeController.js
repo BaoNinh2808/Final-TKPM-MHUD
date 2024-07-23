@@ -4,6 +4,7 @@ const db = require('../models/index');
 const { raw } = require('express');
 
 const secureRandomString = require('secure-random-string');
+const NodeRSA = require('node-rsa');
 const axios = require('axios');
 const FormData = require('form-data')
 const fs = require('fs').promises;
@@ -339,13 +340,41 @@ controller.getFileInfo = async (req, res) => {
 
 controller.getServerRandom = async (req, res) => {
     try{
+        const clientRandom = req.body.random;
+        console.log('Client random:', clientRandom);
         const random = secureRandomString({ length: 32 });  //generate a random string of 32 characters (256 bits)
-        console.log('Random string:', random);
-        res.status(200).json({ random });
+        const signature = await signMessage(random + clientRandom);
+        // console.log('Random string:', random);
+        // console.log('Sign random string:', signature);
+        res.status(200).json({ random : random, signature: signature });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to generate random string' });
     }
 }
+
+// Function to sign the message
+async function signMessage(message) {
+    try {
+        // Read the private key from the file
+        const privateKey = fsSync.readFileSync('./src/private_key/private_key.pem', 'utf8');
+        
+        // Initialize the NodeRSA object with the private key
+        const key = new NodeRSA(privateKey);
+
+        // Set the signing scheme - usually 'pkcs1-sha256' for RSA
+        key.setOptions({ signingScheme: 'pkcs1-sha256' });
+
+        // Sign the message
+        const signature = key.sign(message, 'base64');
+
+        // Return the signature
+        return signature;
+    } catch (error) {
+        console.error('Error signing the message:', error);
+        throw error;
+    }
+}
+
 module.exports = controller;

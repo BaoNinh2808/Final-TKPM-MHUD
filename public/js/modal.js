@@ -212,18 +212,30 @@ uploadButton.addEventListener('click', async () => {
         };
     }
     else {
+        //Generate a random string
+        const random = crypto.getRandomValues(new Uint8Array(16));
+        const randomString = arrayBufferToBase64(random);
+        console.log("random", randomString);
         // Get the server random
         const serverRandomResponse = await fetch('/home/getServerRandom', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ random: randomString })
         });
 
         if (serverRandomResponse.ok) {
             const randomServer = await serverRandomResponse.json();
             console.log("random", randomServer);
-
+            console.log("random client", randomString);
+            // decrypt the random server
+            console.log("signature", randomServer.signature);
+            const verified = verifySignature(publicKey, randomServer.signature, randomServer.random + randomString);
+            if (!verified) {
+                showRightBelowToast(`<p class="color-red">Invalid server random signature!</p>`);
+                return;
+            }
             uploadFile(file, password, randomServer.random, has_password, is_public);
         }
         else {
@@ -329,4 +341,16 @@ async function uploadFile(file, password, randomServer, has_password, is_public)
     isPublicInput.value = 'No';
     const passwordInput = document.getElementById('passwordInput');
     passwordInput.value = '';
+}
+
+
+// Function to convert ArrayBuffer to Base64 string
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
 }
