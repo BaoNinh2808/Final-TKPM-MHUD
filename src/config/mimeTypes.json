@@ -1,0 +1,26 @@
+{
+    "acceptType" : {
+        "png" : "image/jpeg",
+        "jpg" : "image/jpeg",
+        "jpeg" : "image/jpeg",
+        "pdf" : "application/pdf",
+        "docx" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "xlsx" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "pptx" : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "txt" : "text/plain",
+        "mp3" : "audio/mpeg",
+        "mp4" : "video/mp4"
+    },
+    "storageType" :{
+        "png" : "image/jpeg",
+        "jpg" : "image/jpeg",
+        "jpeg" : "image/jpeg",
+        "pdf" : "application/pdf",
+        "docx" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "xlsx" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "pptx" : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "txt" : "text/plain",
+        "mp3" : "audio/mpeg",
+        "mp4" : "video/mp4"
+    }
+}

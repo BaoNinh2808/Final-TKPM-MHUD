@@ -42,13 +42,14 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    random_server: {
+      type: DataTypes.STRING,
+    },
     iv:{
       type: DataTypes.STRING,
-      allowNull: false,
     },
     salt:{
       type: DataTypes.STRING,
-      allowNull: false,
     },
     is_public:{
       type: DataTypes.BOOLEAN,

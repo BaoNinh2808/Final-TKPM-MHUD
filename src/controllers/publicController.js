@@ -2,6 +2,7 @@ const controller = {};
 const { where } = require('sequelize');
 const db = require('../models/index');
 const { raw } = require('express');
+const fsSync = require('fs');
 
 controller.getPublicPage = async (req, res) => {
     try {
@@ -62,46 +63,31 @@ controller.getPublicPage = async (req, res) => {
     }
 }
 
-const extensionToMimeType = {
-    'pdf': 'application/pdf',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'bmp': 'image/bmp',
-    'svg': 'image/svg+xml',
-    'ico': 'image/vnd.microsoft.icon',
-    'html': 'text/html',
-    'css': 'text/css',
-    'js': 'application/javascript',
-    'json': 'application/json',
-    'xml': 'application/xml',
-    'txt': 'text/plain',
-    'csv': 'text/csv',
-    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'rtf': 'application/rtf',
-    'odt': 'application/vnd.oasis.opendocument.text',
-    'ods': 'application/vnd.oasis.opendocument.spreadsheet',
-    'odp': 'application/vnd.oasis.opendocument.presentation',
-    'zip': 'application/zip',
-    'rar': 'application/vnd.rar',
-    '7z': 'application/x-7z-compressed',
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'mp4': 'video/mp4',
-    'avi': 'video/x-msvideo',
-    'mov': 'video/quicktime',
-    'wmv': 'video/x-ms-wmv',
-    'mpeg': 'video/mpeg'
-};
+function loadMimeTypes() {
+    fsSync.readFile('./src/config/mimeTypes.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error loading mime types:', err);
+            return;
+        }
+
+        try {
+            const mimeTypes = JSON.parse(data);
+            const extensionToMimeType = mimeTypes.acceptType;
+            return extensionToMimeType;
+        } catch (jsonError) {
+            console.error('Error parsing JSON:', jsonError);
+        }
+    });
+}
+
+const extensionToMimeType = loadMimeTypes();
 
 // Function to get MIME type from file extension
 function getMimeType(extension) {
+    if (!extensionToMimeType) {
+        extensionToMimeType = loadMimeTypes();
+    }
     return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
 }
-
 
 module.exports = controller;

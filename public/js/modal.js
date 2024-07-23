@@ -123,55 +123,6 @@ document.getElementById('togglePassword').addEventListener('click', function () 
     this.classList.toggle('fa-eye-slash');
 });
 
-// uploadButton.addEventListener('click', async () => {
-//     const fileIndex = uploadButton.dataset.fileIndex;
-//     if (fileIndex === undefined) {
-//         alert('No file selected for upload');
-//         return;
-//     }
-
-//     const file = files[fileIndex];
-
-//     const formData = new FormData();
-//     formData.append('file', file);
-
-//     // Disable the upload button
-//     uploadButton.disabled = true;
-//     uploadButton.textContent = 'Uploading...';
-
-//     try {
-//         const response = await fetch('/home', {
-//             method: 'PUT',
-//             body: formData
-//         });
-
-//         if (response.ok) {
-//             removeButton.click();
-//             // Hide the modal
-//             let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-upload-file'));
-//             modal.hide();
-
-//             // Reload the page
-//             location.reload();
-//             // Show success message
-//             showRightBelowToast("File uploaded successfully!");
-//         } else {
-//             // Show error message
-//             const data = await response.json();
-//             showRightBelowToast(`<p class="color-red">${data.error}</p>`);
-//         }
-//     } catch (error) {
-//         console.error('Error uploading file:', error);
-//         const errorMessage = error.message || 'Upload file error!';
-//         // Show error message
-//         showRightBelowToast(`<p class="color-red">${errorMessage} Please login again.</p>`);
-//     } finally {
-//         // Re-enable the upload button
-//         uploadButton.disabled = false;
-//         uploadButton.textContent = 'Upload'; // Optional: reset the button text
-//     }
-// });
-
 
 uploadButton.addEventListener('click', async () => {
     const fileIndex = uploadButton.dataset.fileIndex;
@@ -199,7 +150,7 @@ uploadButton.addEventListener('click', async () => {
         is_public = true;
     }
 
-    if (is_public == true){
+    if (is_public == true) {
         // call the modal to confirm public sharing
         let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-public-sharing'));
         modal.show();
@@ -208,26 +159,58 @@ uploadButton.addEventListener('click', async () => {
             // Hide the modal
             modal.hide();
             // call the upload function
-            uploadFile(file, null, false, true);
+            uploadFile(file, null, null, false, true);
         };
     }
     else {
-        uploadFile(file, password, has_password, is_public);
+        //Generate a random string
+        const random = crypto.getRandomValues(new Uint8Array(16));
+        const randomString = arrayBufferToBase64(random);
+        console.log("random", randomString);
+        // Get the server random
+        const serverRandomResponse = await fetch('/home/getServerRandom', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ random: randomString })
+        });
+
+        if (serverRandomResponse.ok) {
+            const randomServer = await serverRandomResponse.json();
+            console.log("random", randomServer);
+            console.log("random client", randomString);
+            // decrypt the random server
+            console.log("signature", randomServer.signature);
+            const verified = verifySignature(publicKey, randomServer.signature, randomServer.random + randomString);
+            if (!verified) {
+                showRightBelowToast(`<p class="color-red">Invalid server random signature!</p>`);
+                return;
+            }
+            uploadFile(file, password, randomServer.random, has_password, is_public);
+        }
+        else {
+            const data = await serverRandomResponse.json();
+            showRightBelowToast(`<p class="color-red">${data.error}</p>`);
+        }
     }
 
 });
 
-async function uploadFile(file, password, has_password, is_public) {
-    
+async function uploadFile(file, password, randomServer, has_password, is_public) {
+
     try {
         const formData = new FormData();
-        if (has_password) {
+        //if private --> encrypt the file
+        if (!is_public){
             // Disable the upload button
             uploadButton.disabled = true;
             uploadButton.textContent = 'Encrypting...';
 
             const salt = crypto.getRandomValues(new Uint8Array(16));
-            const key = await deriveKey(password, salt);
+
+            const concat_password = password + randomServer;
+            const key = await deriveKey(concat_password, salt);
             const fileData = await file.arrayBuffer();
             const { iv, encryptedData } = await encryptData(key, fileData);
 
@@ -239,24 +222,30 @@ async function uploadFile(file, password, has_password, is_public) {
             const encryptedBlob = new Blob([encryptedData], { type: file.type });
 
             // Create a FormData object and append the Blob
-            
+
             formData.append('file', encryptedBlob, file.name);
             formData.append('iv', new Blob([iv])); // Append the IV
             formData.append('salt', new Blob([salt])); // Append the salt
+            formData.append('random_server', randomServer); // Append as string
             formData.append('has_password', has_password.toString()); // Append as string
             formData.append('is_public', is_public.toString()); // Append as string
+
         }
-        else{
-            //create a random salt & IV
+        //if not private --> upload the file not encrypted 
+        else {
+            formData.append('file', file);
+            formData.append('has_password', has_password.toString()); // Append as string
+            formData.append('is_public', is_public.toString()); // Append as string
+
+            //dummy data for the right form of upload
+            //generate the salt and iv
             const salt = crypto.getRandomValues(new Uint8Array(16));
             const iv = crypto.getRandomValues(new Uint8Array(12));
-
-            formData.append('file', file);
-            formData.append('iv', new Blob([iv])); // Append the random value
-            formData.append('salt', new Blob([salt])); // Append the random value
-            formData.append('has_password', has_password.toString()); // Append as string
-            formData.append('is_public', is_public.toString()); // Append as string
+            formData.append('iv', new Blob([iv])); // Append the IV
+            formData.append('salt', new Blob([salt])); // Append the salt
+            formData.append('random_server', "randomServer"); // Append as string
         }
+        
         // Disable the upload button
         uploadButton.disabled = true;
         uploadButton.textContent = 'Uploading...';
@@ -273,7 +262,7 @@ async function uploadFile(file, password, has_password, is_public) {
                 let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-upload-file'));
                 modal.hide();
 
-                
+
                 // Show success message
                 showRightBelowToast("File uploaded successfully!");
 
