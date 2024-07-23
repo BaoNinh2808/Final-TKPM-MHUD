@@ -160,6 +160,7 @@ app.use('/public',  require('./routes/publicRoutes'));
 
 app.use('/upload', require('./routes/uploadRoutes'));
 
+app.use('/requestFile', require('./routes/requestFileRoutes'));
 //404 page
 app.use((req, res, next) =>{
     res.status(404).send('File not found!');
