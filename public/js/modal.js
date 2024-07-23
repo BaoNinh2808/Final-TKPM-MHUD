@@ -123,55 +123,6 @@ document.getElementById('togglePassword').addEventListener('click', function () 
     this.classList.toggle('fa-eye-slash');
 });
 
-// uploadButton.addEventListener('click', async () => {
-//     const fileIndex = uploadButton.dataset.fileIndex;
-//     if (fileIndex === undefined) {
-//         alert('No file selected for upload');
-//         return;
-//     }
-
-//     const file = files[fileIndex];
-
-//     const formData = new FormData();
-//     formData.append('file', file);
-
-//     // Disable the upload button
-//     uploadButton.disabled = true;
-//     uploadButton.textContent = 'Uploading...';
-
-//     try {
-//         const response = await fetch('/home', {
-//             method: 'PUT',
-//             body: formData
-//         });
-
-//         if (response.ok) {
-//             removeButton.click();
-//             // Hide the modal
-//             let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modal-upload-file'));
-//             modal.hide();
-
-//             // Reload the page
-//             location.reload();
-//             // Show success message
-//             showRightBelowToast("File uploaded successfully!");
-//         } else {
-//             // Show error message
-//             const data = await response.json();
-//             showRightBelowToast(`<p class="color-red">${data.error}</p>`);
-//         }
-//     } catch (error) {
-//         console.error('Error uploading file:', error);
-//         const errorMessage = error.message || 'Upload file error!';
-//         // Show error message
-//         showRightBelowToast(`<p class="color-red">${errorMessage} Please login again.</p>`);
-//     } finally {
-//         // Re-enable the upload button
-//         uploadButton.disabled = false;
-//         uploadButton.textContent = 'Upload'; // Optional: reset the button text
-//     }
-// });
-
 
 uploadButton.addEventListener('click', async () => {
     const fileIndex = uploadButton.dataset.fileIndex;
@@ -341,16 +292,4 @@ async function uploadFile(file, password, randomServer, has_password, is_public)
     isPublicInput.value = 'No';
     const passwordInput = document.getElementById('passwordInput');
     passwordInput.value = '';
-}
-
-
-// Function to convert ArrayBuffer to Base64 string
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
 }

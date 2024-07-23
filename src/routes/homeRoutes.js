@@ -16,5 +16,6 @@ router.put('/', ensureLoginMiddleware, controller.upload, controller.handleUploa
 router.delete('/', ensureLoginMiddleware, controller.deleteFile);
 router.post('/getFileInfo', ensureLoginMiddleware, controller.getFileInfo);
 router.post('/getServerRandom', ensureLoginMiddleware, controller.getServerRandom);
+router.get('/mimeTypes', ensureLoginMiddleware, controller.getMimeTypes);
 
 module.exports = router;

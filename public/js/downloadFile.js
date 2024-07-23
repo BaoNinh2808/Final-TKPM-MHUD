@@ -127,58 +127,6 @@ function hexToUint8Array(hex) {
     return byteArray;
 }
 
-// Define the mapping of file extensions to MIME types
-const extensionToMimeType = {
-    'pdf': 'application/pdf',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'bmp': 'image/bmp',
-    'svg': 'image/svg+xml',
-    'ico': 'image/vnd.microsoft.icon',
-    'html': 'text/html',
-    'css': 'text/css',
-    'js': 'application/javascript',
-    'json': 'application/json',
-    'xml': 'application/xml',
-    'txt': 'text/plain',
-    'csv': 'text/csv',
-    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'rtf': 'application/rtf',
-    'odt': 'application/vnd.oasis.opendocument.text',
-    'ods': 'application/vnd.oasis.opendocument.spreadsheet',
-    'odp': 'application/vnd.oasis.opendocument.presentation',
-    'zip': 'application/zip',
-    'rar': 'application/vnd.rar',
-    '7z': 'application/x-7z-compressed',
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'mp4': 'video/mp4',
-    'avi': 'video/x-msvideo',
-    'mov': 'video/quicktime',
-    'wmv': 'video/x-ms-wmv',
-    'mpeg': 'video/mpeg'
-};
-
-// Function to get MIME type from file extension
-function getMimeType(extension) {
-    return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
-}
-
-function base64ToArrayBuffer(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
-}
-
 async function decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password) {
     try {
         showRightBelowToast('Decrypting File');
@@ -245,23 +193,3 @@ document.getElementById('toggleDecryptPassword').addEventListener('click', funct
     this.classList.toggle('fa-eye');
     this.classList.toggle('fa-eye-slash');
 });
-
-function uint8ArrayToBase64(uint8Array) {
-    let binaryString = '';
-    const chunkSize = 0x8000; // Maximum chunk size
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-        const chunk = uint8Array.subarray(i, i + chunkSize);
-        binaryString += String.fromCharCode.apply(null, chunk);
-    }
-    return btoa(binaryString);
-}
-
-function base64ToUint8Array(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-}
