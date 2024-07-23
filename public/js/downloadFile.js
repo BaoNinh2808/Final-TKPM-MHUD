@@ -37,15 +37,21 @@ async function downFn(url, fileName, cid) {
         const ivHex = data.iv;
         const saltHex = data.salt;
         const has_password = data.has_password;
+        const password = data.password;
+        const random_server = data.random_server;
+        const is_public = data.is_public;
 
-        const iv = hexToUint8Array(ivHex);
-        const salt = hexToUint8Array(saltHex);
-
-        console.log("iv", iv);
-        console.log("salt", salt);
+        
 
         // Decrypt the file if it is password-protected
-        if (has_password) {
+        if (is_public === false) {
+            showRightBelowToast('Downloading File');
+            const iv = hexToUint8Array(ivHex);
+            const salt = hexToUint8Array(saltHex);
+
+            console.log("iv", iv);
+            console.log("salt", salt);
+
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error("Network Problem");
@@ -56,16 +62,24 @@ async function downFn(url, fileName, cid) {
 
             console.log("retrive file", encryptedData);    
             
-            // trigger the modal for password
-            const base64EncryptedData = uint8ArrayToBase64(encryptedData);
-            document.getElementById('enterPassBtn').dataset.base64EncryptedData = base64EncryptedData;
-            document.getElementById('enterPassBtn').dataset.ivHex = ivHex;
-            document.getElementById('enterPassBtn').dataset.saltHex = saltHex;
-            document.getElementById('enterPassBtn').dataset.fileName = fileName;
-            let modal = new bootstrap.Modal(document.getElementById('modal-enter-password'));
-            modal.show();
+            // if has password
+            if (has_password === true) {
+                // trigger the modal for password
+                const base64EncryptedData = uint8ArrayToBase64(encryptedData);
+                document.getElementById('enterPassBtn').dataset.base64EncryptedData = base64EncryptedData;
+                document.getElementById('enterPassBtn').dataset.ivHex = ivHex;
+                document.getElementById('enterPassBtn').dataset.saltHex = saltHex;
+                document.getElementById('enterPassBtn').dataset.fileName = fileName;
+                document.getElementById('enterPassBtn').dataset.random_server = random_server;
+                let modal = new bootstrap.Modal(document.getElementById('modal-enter-password'));
+                modal.show();
+            }
+            else {
+                decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
+            }
         }
         else {
+            //file not encrypt, just download it
             showRightBelowToast('Downloading File');
             
             const response = await fetch(url);
@@ -98,77 +112,11 @@ function extFn(url) {
 }
 
 
-function hexToUint8Array(hex) {
-    // Ensure the hex string is in uppercase and remove any whitespace
-    hex = hex.toUpperCase().replace(/\s+/g, '');
-
-    // Create a new Uint8Array with half the length of the hex string
-    const byteArray = new Uint8Array(hex.length / 2);
-
-    // Loop through the hex string and populate the Uint8Array
-    for (let i = 0; i < byteArray.length; i++) {
-        byteArray[i] = parseInt(hex.substr(i * 2, 2), 16);
-    }
-
-    return byteArray;
-}
-
-// Define the mapping of file extensions to MIME types
-const extensionToMimeType = {
-    'pdf': 'application/pdf',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'bmp': 'image/bmp',
-    'svg': 'image/svg+xml',
-    'ico': 'image/vnd.microsoft.icon',
-    'html': 'text/html',
-    'css': 'text/css',
-    'js': 'application/javascript',
-    'json': 'application/json',
-    'xml': 'application/xml',
-    'txt': 'text/plain',
-    'csv': 'text/csv',
-    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'rtf': 'application/rtf',
-    'odt': 'application/vnd.oasis.opendocument.text',
-    'ods': 'application/vnd.oasis.opendocument.spreadsheet',
-    'odp': 'application/vnd.oasis.opendocument.presentation',
-    'zip': 'application/zip',
-    'rar': 'application/vnd.rar',
-    '7z': 'application/x-7z-compressed',
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'mp4': 'video/mp4',
-    'avi': 'video/x-msvideo',
-    'mov': 'video/quicktime',
-    'wmv': 'video/x-ms-wmv',
-    'mpeg': 'video/mpeg'
-};
-
-// Function to get MIME type from file extension
-function getMimeType(extension) {
-    return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
-}
-
-function base64ToArrayBuffer(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
-}
-
-async function decryptDataAndDownload(encryptedData, iv, salt, fileName, password) {
+async function decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password) {
     try {
-        showRightBelowToast('Downloading File');
-        const key = await deriveKey(password, salt);
+        showRightBelowToast('Decrypting File');
+        const concat_password = password + random_server;
+        const key = await deriveKey(concat_password, salt);
         console.log("key", key);
         
         const decryptedData = await decryptData(key, iv, encryptedData);
@@ -197,54 +145,40 @@ async function decryptDataAndDownload(encryptedData, iv, salt, fileName, passwor
     }
 }
 
-document.getElementById('enterPassBtn').addEventListener('click', async () => {
-    const password = document.getElementById('decryptPasswordInput').value.trim();
-    const encryptedData = base64ToUint8Array(document.getElementById('enterPassBtn').dataset.base64EncryptedData);
-    const iv = hexToUint8Array(document.getElementById('enterPassBtn').dataset.ivHex);
-    const salt = hexToUint8Array(document.getElementById('enterPassBtn').dataset.saltHex);
-    const fileName = document.getElementById('enterPassBtn').dataset.fileName;
+if (document.getElementById('enterPassBtn')){
+    document.getElementById('enterPassBtn').addEventListener('click', async () => {
+        const password = document.getElementById('decryptPasswordInput').value.trim();
+        const encryptedData = base64ToUint8Array(document.getElementById('enterPassBtn').dataset.base64EncryptedData);
+        const iv = hexToUint8Array(document.getElementById('enterPassBtn').dataset.ivHex);
+        const salt = hexToUint8Array(document.getElementById('enterPassBtn').dataset.saltHex);
+        const fileName = document.getElementById('enterPassBtn').dataset.fileName;
+        const random_server = document.getElementById('enterPassBtn').dataset.random_server;
 
-    console.log("password", password.toString());
-    console.log("encryptedData",encryptedData);
-    console.log("iv",iv);
-    console.log("salt",salt);
-    console.log("fileName",fileName);
+        console.log("password", password.toString());
+        console.log("encryptedData",encryptedData);
+        console.log("iv",iv);
+        console.log("salt",salt);
+        console.log("fileName",fileName);
+        console.log("random_server",random_server);
 
-    decryptDataAndDownload(encryptedData, iv, salt, fileName, password);
+        decryptDataAndDownload(encryptedData, iv, salt, random_server, fileName, password);
 
-    console.log("download success");
-    //clear data in input field
-    document.getElementById('decryptPasswordInput').value = '';
-    let modal = bootstrap.Modal.getInstance(document.getElementById('modal-enter-password'));
-    modal.hide();
-});
-
-document.getElementById('toggleDecryptPassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('decryptPasswordInput');
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-
-    // Toggle the eye slash icon
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-});
-
-function uint8ArrayToBase64(uint8Array) {
-    let binaryString = '';
-    const chunkSize = 0x8000; // Maximum chunk size
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-        const chunk = uint8Array.subarray(i, i + chunkSize);
-        binaryString += String.fromCharCode.apply(null, chunk);
-    }
-    return btoa(binaryString);
+        console.log("download success");
+        //clear data in input field
+        document.getElementById('decryptPasswordInput').value = '';
+        let modal = bootstrap.Modal.getInstance(document.getElementById('modal-enter-password'));
+        modal.hide();
+    });
 }
 
-function base64ToUint8Array(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
+if (document.getElementById('toggleDecryptPassword')){
+    document.getElementById('toggleDecryptPassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('decryptPasswordInput');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    
+        // Toggle the eye slash icon
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
 }

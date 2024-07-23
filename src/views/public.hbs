@@ -24,34 +24,52 @@
                     <div class="col-lg-3 col-3">
                         <div>
                             <div class="color-deep-violet fw-medium fs-6 mb-1">Type</div>
-                            <select class="form-select form-select-sm" aria-label=".dropdown-for-file-type">
-                                <option selected></option>
-                                <option value="1">PDF</option>
-                                <option value="2">DOCX</option>
-                                <option value="3">XLSX</option>
-                                <option value="4">TXT</option>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-file-type" id="filter-type">
+                                {{#if type}}
+                                    <option></option> 
+                                {{else}}
+                                    <option selected></option>
+                                {{/if}}
+                                <option value="pdf" {{#if (eq type "pdf")}} selected {{/if}}>PDF</option>
+                                <option value="docx" {{#if (eq type "docx")}} selected {{/if}}>DOCX</option>
+                                <option value="xlsx" {{#if (eq type "xlsx")}} selected {{/if}}>XLSX</option>
+                                <option value="pptx" {{#if (eq type "pptx")}} selected {{/if}}>PPTX</option>
+                                <option value="txt" {{#if (eq type "txt")}} selected {{/if}}>TXT</option>
+                                <option value="jpg" {{#if (eq type "jpg")}} selected {{/if}}>JPG</option>
+                                <option value="png" {{#if (eq type "png")}} selected {{/if}}>PNG</option>
+                                <option value="mp3" {{#if (eq type "mp3")}} selected {{/if}}>MP3</option>
+                                <option value="mp4" {{#if (eq type "mp4")}} selected {{/if}}>MP4</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-lg-3 col-3">
                         <div>
                             <div class="color-deep-violet fw-medium fs-6 mb-1">Owner</div>
-                            <select class="form-select form-select-sm" aria-label=".dropdown-for-public-file">
-                                <option selected></option>
-                                <option value="1">Yes</option>
-                                <option value="2">No</option>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-public-file" id="filter-owner">
+                                {{#if owner}}
+                                    <option></option> 
+                                {{else}}
+                                    <option selected></option>
+                                {{/if}}
+                                {{#each users}}
+                                    <option value="{{name}}" {{#if (eq ../owner name)}} selected {{/if}}>{{name}}</option>
+                                {{/each}}
                             </select>
                         </div>
                     </div>
                     <div class="col-lg-3 col-3">
                         <div>
                             <div class="color-deep-violet fw-medium fs-6 mb-1">Created Date</div>
-                            <select class="form-select form-select-sm" aria-label=".dropdown-for-created-date">
-                                <option selected></option>
-                                <option value="1">Today</option>
-                                <option value="2">Last 7 days</option>
-                                <option value="3">Last 30 days</option>
-                                <option value="4">This year</option>
+                            <select class="form-select form-select-sm" aria-label=".dropdown-for-created-date" id="filter-created-date">
+                                {{#if date}}
+                                    <option></option> 
+                                {{else}}
+                                    <option selected></option>
+                                {{/if}}
+                                <option value="1" {{#if (eq date "1")}} selected {{/if}}>Today</option>
+                                <option value="7" {{#if (eq date "7")}} selected {{/if}}>Last 7 days</option>
+                                <option value="30" {{#if (eq date "30")}} selected {{/if}}>Last 30 days</option>
+                                <option value="365" {{#if (eq date "365")}} selected {{/if}}>This year</option>
                             </select>
                         </div>
                     </div>
@@ -214,4 +232,5 @@
 <script src="/js/shareLink.js"></script>
 <script src="/js/downloadFile.js"></script>
 <script src="/js/encryptFile.js"></script>
+<script src="/js/publicFilterFile.js"></script>
 {{/block}}
