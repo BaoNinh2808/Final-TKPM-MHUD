@@ -81,7 +81,7 @@ controller.sendRequestFile = async (req, res) => {
                     Deadline: ${deadlineDate} ${deadlineTime}
 
                     Please upload the requested files using the following link:
-                    https://final-tkpm-mhud.onrender.com/request-file/upload?id=${request.id}
+                    https://final-tkpm-mhud.onrender.com/requestFile/upload?id=${request.id}
                 `.trim()
             };
 
@@ -159,31 +159,39 @@ function getMimeType(extension) {
 controller.upload = upload.single('file');
 
 controller.postAnonymousUpload = async (req, res) => {
-    const { email, title, description} = req.body;
-    console.log(req.body);
-    const file = req.file;
-    if (!file) {
-        return res.status(400).send({ error: 'Please upload a file' });
-    }
-    if (!email) {
-        return res.status(400).send({ error: 'Please enter your email' });
-    }
-
-    const user = await db.RequestUser.findOne({
-        where: {
-            email: email,
-            title: title,
-            description: description
-        }
-    });
-
-    if (!user) {
-        return res.status(400).send({ error: 'User not found' });
-    }
-    
-    const user_id = user.user_id;
-
     try {
+        const { email, title, description} = req.body;
+        console.log(req.body);
+        const file = req.file;
+        if (!file) {
+            return res.status(400).send({ error: 'Please upload a file' });
+        }
+        if (!email) {
+            return res.status(400).send({ error: 'Please enter your email' });
+        }
+
+        const request = await db.RequestUser.findOne({
+            where: {
+                email: email,
+                title: title,
+                description: description
+            }
+        });
+
+        if (!request) {
+            return res.status(400).send({ error: 'Not found request' });
+        }
+        
+        const user_id = request.user_id;
+        //check if this request is able to uploaded
+        const deadline = request.deadline;
+        if (deadline && new Date() > deadline) {
+            return res.status(400).send({ error: 'Deadline has passed' });
+        }
+        if (request.email !== email) {
+            return res.status(400).send({ error: 'Email does not match' });
+        }
+        
         const targetPath = path.join('uploads', file.originalname);
         const fileName = file.originalname;
         const fileFormat = file.mimetype;
@@ -219,8 +227,16 @@ controller.postAnonymousUpload = async (req, res) => {
         if (pinataResponse.status >= 200 && pinataResponse.status < 300) {
             console.log('File uploaded to IPFS:', pinataResponse.data);
 
-            let document = null;
-            document = await db.RequestDocument.create({
+            //update is_uploaded to true
+            await db.RequestUser.update({
+                is_uploaded: true
+            }, {
+                where: {
+                    id: request.id
+                }
+            });
+
+            let document = await db.RequestDocument.create({
                 name: fileName,
                 CID: pinataResponse.data.IpfsHash,
                 user_id: user_id,
@@ -230,6 +246,7 @@ controller.postAnonymousUpload = async (req, res) => {
                 uploader_email: email,
                 created_date: new Date()
             });
+            
             // Delete the temporary file
             await fs.unlink(file.path);
 
