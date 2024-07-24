@@ -471,3 +471,11 @@ button.remove {
 .password-container {
     width: 100%;
 }
+
+.not-overflow-text{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    display: block;
+}

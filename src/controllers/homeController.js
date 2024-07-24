@@ -122,7 +122,7 @@ controller.upload = upload.fields([
 controller.handleUpload = async (req, res, next) => {
     const files = req.files; // This will contain the file information
     const body = req.body; // This will contain the non-file fields
-    const user_id = req.session.user.id;
+    const user_id = req.cookies.userID;
 
     if (!files || !files.file || !files.iv || !files.salt) {
         return res.status(400).json({ error: 'File, IV, and salt are required' });
@@ -265,7 +265,7 @@ controller.handleUpload = async (req, res, next) => {
 
 controller.deleteFile = async (req, res) => {
     const fileName = req.body.file_name;
-    const user_id = req.session.user.id;
+    const user_id = req.cookies.userID;
     console.log('Deleting file:', fileName);
     //check if file exists in database
     const document = await db.Document.findOne({
@@ -308,7 +308,7 @@ controller.deleteFile = async (req, res) => {
 controller.getFileInfo = async (req, res) => {
     const fileName = req.body.fileName;
     const cid = req.body.cid;
-    const user_id = req.session.user.id;
+    const user_id = req.cookies.userID;
     //check if file exists in database
     const document = await db.Document.findOne({
         where: {
