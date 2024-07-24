@@ -8,11 +8,18 @@ controller.getPublicPage = async (req, res) => {
     try {
         let {type, owner, date} = req.query;
 
-        //get all public documents
+        //get all public documents and join with users table to get user name (call it owner)
         let documents = await db.Document.findAll({
             where: {
                 is_public: true
-            }
+            },
+            include: [
+                {
+                    model: db.User,
+                    attributes: ['name'],
+                    as : 'user'
+                }
+            ],
         });
 
         //get all users
