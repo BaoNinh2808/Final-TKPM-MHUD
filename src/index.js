@@ -5,6 +5,7 @@ const moment = require('moment');
 const cookieParser = require('cookie-parser');
 const useragent = require('./middleware/deviceMiddleware');
 const getPublicIPRoute = require('./routes/getIpAPI');
+const requestFileRoute = require('./routes/requestFileRoutes');
 const startCronJobs = require('./utils/cron');
 const app = express();
 const port = process.env.port || 3000;
@@ -35,6 +36,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(useragent); // su dung deviceMiddleware
 
 app.use('/get-public-ip', getPublicIPRoute);
+
+app.use('/request-file', requestFileRoute);
 
 
 //import routes
@@ -131,8 +134,11 @@ app.set('view engine', 'hbs');
 //create tables by code
 app.get('/createTables', (req, res) => {
     const models = require('./models');
-    models.sequelize.sync().then(() => {
-        res.send('table created');
+    models.sequelize.sync({ alter: true }).then(() => {
+        res.send('Tables created/altered');
+    }).catch(error => {
+        console.error('Error creating/altering tables:', error);
+        res.status(500).send('Error creating/altering tables');
     });
 });
 
@@ -160,6 +166,7 @@ app.use('/public',  require('./routes/publicRoutes'));
 
 app.use('/upload', require('./routes/uploadRoutes'));
 
+app.use('/requestFile', require('./routes/requestFileRoutes'));
 //404 page
 app.use((req, res, next) =>{
     res.status(404).send('File not found!');
