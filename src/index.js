@@ -5,6 +5,7 @@ const moment = require('moment');
 const cookieParser = require('cookie-parser');
 const useragent = require('./middleware/deviceMiddleware');
 const getPublicIPRoute = require('./routes/getIpAPI');
+const requestFileRoute = require('./routes/requestFileRoutes');
 const startCronJobs = require('./utils/cron');
 const app = express();
 const port = process.env.port || 3000;
@@ -35,6 +36,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(useragent); // su dung deviceMiddleware
 
 app.use('/get-public-ip', getPublicIPRoute);
+
+app.use('/request-file', requestFileRoute);
 
 
 //import routes

@@ -37,7 +37,7 @@
         <div class="card centered-card container py-3">
             <h5 class="text-center mb-3"><strong>Login to your account</strong></h5>
             
-            <form class="container ps-5 pe-5" id="loginForm" action="/auth/login" method="POST">
+            <form class="container ps-5 pe-5" id="loginForm">
                 <div class="mb-3">
                     <label for="input-email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="input-email" name="email" placeholder="email@gmail.com" required>
@@ -47,7 +47,7 @@
                         <label for="input-password" class="form-label">Password</label>
                         <span class="form-text" style="color: #1570EF; cursor: pointer;">Forgot?</span>
                     </div>
-                    <input type="password" class="form-control" id="input-password" name="password" placeholder="Enter your password" required>
+                    <input type="password" class="form-control mb-3" id="input-password" name="password" placeholder="Enter your password" required>
                     <div id="issue-assign-error-1" class="text-danger fs-6" style="display: none;">
                         <i class="bi bi-exclamation-circle"></i>
                         <span>Password must have at least 8 characters</span>
@@ -155,6 +155,36 @@
             } catch (error) {
                 console.error('Error:', error);
             }
+
+
+            document.getElementById('loginForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const formObject = {};
+                formData.forEach((value, key) => formObject[key] = value);
+
+                try{
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formObject),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        window.location.href = '/home';
+                    } else {
+                        const errorElement = document.getElementById('issue-assign-error-2');
+                        errorElement.style.display = 'block';
+                        errorElement.querySelector('span').textContent = result.error;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
         });
     </script>
 

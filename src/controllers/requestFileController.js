@@ -37,7 +37,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: 'huymasterpiece@gmail.com',
         pass: 'egsl weqx svkh ukue'
-    }
+    } 
 });
 
 controller.sendRequestFile = async (req, res) => {
