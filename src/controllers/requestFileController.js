@@ -41,45 +41,25 @@ const transporter = nodemailer.createTransport({
 });
 
 controller.sendRequestFile = async (req, res) => {
-    let { title, description, folder, emails, setDeadline, deadlineDate, deadlineTime } = req.body;
-
-    // if setDeadline is not checked, set deadlineDate and deadlineTime to null
-    let deadline_date = null;
-    if (setDeadline == "on") {
-        deadline_date = new Date(deadlineDate + " " + deadlineTime);
-    } else {
-        deadline_date = null;
-    }
-    const user_id = req.cookies.userID;
-
-
-    // // Create folder (in the future, you can replace this with actual folder creation logic)
-    // const folderName = title;
-
-    // Send email
-    const mailOptions = {
-        from: 'huymasterpiece@gmail.com',
-        to: emails,
-        subject: `File Request: ${title}`,
-        text: `
-            You have received a new file request.
-
-            Title: ${title}
-            Description: ${description}
-            Deadline: ${deadlineDate} ${deadlineTime}
-
-            Please upload the requested files using the following link:
-            http://yourwebsite.com/request-file/upload
-        `.trim()
-    };
 
     try {
-        await transporter.sendMail(mailOptions);
+
+        let { title, description,  emails, setDeadline, deadlineDate, deadlineTime } = req.body;
+
+        // if setDeadline is not checked, set deadlineDate and deadlineTime to null
+        let deadline_date = null;
+        if (setDeadline == "on") {
+            deadline_date = new Date(deadlineDate + " " + deadlineTime);
+        } else {
+            deadline_date = null;
+        }
+        const user_id = req.cookies.userID;
+
         // Save request to database
         // convert mail to list of mails
-        emails = emails.split(',').map(email => email.trim());
-        for (let email of emails) {
-            await db.RequestUser.create({
+        const emailList = emails.split(',').map(email => email.trim());
+        for (let email of emailList) {
+            const request = await db.RequestUser.create({
                 title: title,
                 description: description,
                 user_id: user_id,
@@ -87,6 +67,25 @@ controller.sendRequestFile = async (req, res) => {
                 deadline: deadline_date,
                 is_uploaded: false
             });
+        
+            // Send email
+            const mailOptions = {
+                from: 'huymasterpiece@gmail.com',
+                to: email,
+                subject: `File Request: ${title}`,
+                text: `
+                    You have received a new file request.
+
+                    Title: ${title}
+                    Description: ${description}
+                    Deadline: ${deadlineDate} ${deadlineTime}
+
+                    Please upload the requested files using the following link:
+                    https://final-tkpm-mhud.onrender.com/request-file/upload?id=${request.id}
+                `.trim()
+            };
+
+            await transporter.sendMail(mailOptions);
         }
 
         res.status(200).send("Request sent successfully");
@@ -113,6 +112,12 @@ controller.getAnonymousUpload = async (req, res) => {
         return res.status(404).send({ error: 'File Not Found' });
     }
 
+    const owner = await db.User.findOne({
+        where: {
+            id: user.user_id
+        }
+    });
+    res.locals.ownerName = owner.name;
     res.locals.email = user.email;
     res.locals.requestTitle = user.title;
     res.locals.requestDescription = user.description;

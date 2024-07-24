@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Function to handle form submission
     async function handleFormSubmit(event) {
+        //disable the button
+        submitButton.disabled = true
+        submitButton.innerHTML = 'Sending...'
+
         event.preventDefault(); // Prevent the default form submission
 
         getTagValues(); // Get tag values and set as input value
@@ -63,7 +67,9 @@ document.addEventListener('DOMContentLoaded', function(){
             showRightBelowToast(`<p class="color-red">Send request error</p>`);
         }
 
-        
+        //enable the button
+        submitButton.disabled = false
+        submitButton.innerHTML = 'Create'
     }
 
     // Attach the submit event listener to the form

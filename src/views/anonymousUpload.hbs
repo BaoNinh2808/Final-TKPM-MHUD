@@ -23,16 +23,18 @@
     <div class="modal-content align-items-center fw-bold color-deep-violet primary-background" style="min-height: 100vh;">
         <div class="modal-header" style="border-bottom: none;">
             <div class="modal-title fs-4 mb-3 mt-3" id="modalTitleId">
-                You Are Requested To Upload Files By {{owner.name}}
+                You Are Requested To Upload Files By {{ownerName}}
             </div>
 
         </div>
-        <div class="color-gray fs-6 mb-2" id="requestTitle" data-title="{{requestTitle}}">
-            <strong>Title:</strong> {{requestTitle}}
+        <div class="color-black fs-5 fw-normal mb-2" id="requestTitle" data-title="{{requestTitle}}">
+            {{requestTitle}}
         </div>
-        <div class="color-gray fs-6 mb-3" id="requestDescription" data-description="{{requestDescription}}">
-            <strong>Description:</strong> {{requestDescription}}
+        
+        <div class="color-gray fw-normal fs-6 {{#if requestDescription}} mb-3 {{/if}}" id="requestDescription" data-description="{{requestDescription}}">
+            {{requestDescription}}
         </div>
+        
         <div class="modal-body"
             style="border-bottom: none; width: 100%; display: flex; justify-content: center; align-items: center;">
             <div class="upload-container">
