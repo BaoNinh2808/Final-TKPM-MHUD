@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{title}}</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/ca0d395c8b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+    <link href="/css/project.css" rel="stylesheet" />
+    <link href="/css/color.css" rel="stylesheet" />
+    <link href="/css/hover_and_click.css" rel="stylesheet" />
+    <link href="/css/font_size.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="modal-content align-items-center fw-bold color-deep-violet primary-background" style="min-height: 100vh;">
+        <div class="modal-header" style="border-bottom: none;">
+            <div class="modal-title fs-4 mb-3 mt-3" id="modalTitleId">
+                You Are Requested To Upload Files By {{owner.name}}
+            </div>
+
+        </div>
+        <div class="color-gray fs-6 mb-2" id="requestTitle" data-title="{{requestTitle}}">
+            <strong>Title:</strong> {{requestTitle}}
+        </div>
+        <div class="color-gray fs-6 mb-3" id="requestDescription" data-description="{{requestDescription}}">
+            <strong>Description:</strong> {{requestDescription}}
+        </div>
+        <div class="modal-body"
+            style="border-bottom: none; width: 100%; display: flex; justify-content: center; align-items: center;">
+            <div class="upload-container">
+                <div class="drag-area">
+                    <div class="icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <span class="header">Drag & Drop</span>
+                    <span class="header">or <span class="button">browse</span></span>
+                    <input type="file" hidden multiple />
+                    <span class="support">Supports: TXT, JPEG, JPG, PNG, PDF, XLSX, PPTX, DOCX, MP3, MP4</span>
+                </div>
+                <div class="row justify-content-center align-items-center">
+                    <div class="col text-center">
+                        <button class="remove" style="display: none;">Remove</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3" style="max-width: 350px;">
+                <form id="emailForm">
+                    <label for="inputEmail" class="form-label">Your Email address <span style="color: red;">*</span></label>
+                    <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" data-email-required="{{email}}" required >
+                    <div id="emailHelp" class="form-text fs-6 fw-normal">Please enter the correct email address associated with this file upload request.</div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer mt-3 mb-3" style="border-top: none;">
+            <button type="button" class="btn btn-primary" id="upload-new-file-button">Upload</button>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="right-below-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="/img/logo.png" class="rounded me-2" alt="..." style="height: 1.2rem;" />
+                <strong class="me-auto">Server Notification</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.3.2/bin/jsencrypt.min.js"></script>
+    <script src="/js/showToast.js"></script>
+    <script src="/js/rsaVerify.js"></script>
+    <script src="/js/convertType.js"></script>
+    <script src="/js/anonymousUploadFile.js"></script>
+</body>
+
+</html>

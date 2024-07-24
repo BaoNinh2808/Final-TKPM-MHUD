@@ -131,8 +131,11 @@ app.set('view engine', 'hbs');
 //create tables by code
 app.get('/createTables', (req, res) => {
     const models = require('./models');
-    models.sequelize.sync().then(() => {
-        res.send('table created');
+    models.sequelize.sync({ alter: true }).then(() => {
+        res.send('Tables created/altered');
+    }).catch(error => {
+        console.error('Error creating/altering tables:', error);
+        res.status(500).send('Error creating/altering tables');
     });
 });
 

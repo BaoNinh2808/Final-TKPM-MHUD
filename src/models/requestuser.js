@@ -22,6 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       type : DataTypes.INTEGER,
       allowNull : false,
     },
+    title : {
+      type : DataTypes.STRING,
+      allowNull : false,
+    },
+    description : {
+      type : DataTypes.STRING,
+    },
     is_uploaded : {
       type : DataTypes.BOOLEAN,
       allowNull : false,
