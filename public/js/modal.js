@@ -202,16 +202,16 @@ uploadButton.addEventListener('click', async () => {
                         showRightBelowToast(`<p class="color-green">File is safe to upload.</p>`);
                     } else if (response.status === 400) {
                         showRightBelowToast(`<p class="color-red">${response.data.error}</p>`);
+                        return;
                     }
                 } catch (error) {
                     if (error.response) {
                         showRightBelowToast(`<p class="color-red">${error.response.data.error}</p>`);
+                        return;
                     } 
                 } finally {
                     uploadButton.disabled = false;
                     uploadButton.textContent = 'Upload';
-
-                    return;
                 }
             }
             
