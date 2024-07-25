@@ -37,7 +37,7 @@
         <div class="card centered-card container py-3">
             <h5 class="text-center mb-3"><strong>Login to your account</strong></h5>
             
-            <form class="container ps-5 pe-5" id="loginForm">
+            <form class="container ps-5 pe-5" id="loginForm" action="/login" method="POST">
                 <div class="mb-3">
                     <label for="input-email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="input-email" name="email" placeholder="email@gmail.com" required>
@@ -176,6 +176,8 @@
 
                     if (response.ok) {
                         window.location.href = '/home';
+                    } else if (response.status === 401) {
+                        window.location.href = '/OTP'; 
                     } else {
                         const errorElement = document.getElementById('issue-assign-error-2');
                         errorElement.style.display = 'block';

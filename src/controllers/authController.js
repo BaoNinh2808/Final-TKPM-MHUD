@@ -184,7 +184,7 @@ exports.handleLogin = async (req, res) => {
             await transporter.sendMail(mailOptions);
 
             // Redirect to verification page
-            return res.redirect('/OTP');
+            return res.status(401).json({ error: 'Hành vi đăng nhập lạ. Vui lòng xác minh OTP.' });
         }
 
 
@@ -217,6 +217,10 @@ const transporter = nodemailer.createTransport({
 function generatePIN() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
+
+exports.renderOTPPage = (req, res) => {
+    res.render('OTP', { layout: false });
+};
 
 exports.verifyPIN = async (req, res) => {
     try {
