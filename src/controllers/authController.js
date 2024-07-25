@@ -198,7 +198,6 @@ exports.handleLogin = async (req, res) => {
         res.cookie('token', token, { httpOnly: true });
         res.cookie('isLogged', true);
         res.cookie('userID', user.id);
-
         return res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);

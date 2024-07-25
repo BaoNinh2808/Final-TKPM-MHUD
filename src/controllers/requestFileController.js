@@ -40,10 +40,6 @@ const transporter = nodemailer.createTransport({
     } 
 });
 
-exports.getRequestFilePage = (req, res) => {
-    res.render('requestFile', { title: 'Request File' });
-};
-
 controller.sendRequestFile = async (req, res) => {
 
     try {
