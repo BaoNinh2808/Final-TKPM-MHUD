@@ -190,22 +190,29 @@ uploadButton.addEventListener('click', async () => {
                 showRightBelowToast(`<p class="color-red">Invalid server random signature!</p>`);
                 return;
             }
-            try {
-                uploadButton.disabled = true;
-                uploadButton.textContent = 'Checking...';
-                const response = await axios.post('https://malware-detect-server-1.onrender.com/checkPDF', malFormData);
-                if (response.status === 200) {
-                    showRightBelowToast(`<p class="color-green">File is safe to upload.</p>`);
-                } else if (response.status === 400) {
-                    showRightBelowToast(`<p class="color-red">${response.data.error}</p>`);
+            // check file is pdf or not
+            if (file.type === 'application/pdf') {
+                
+                try {
+                    uploadButton.disabled = true;
+                    uploadButton.textContent = 'Checking...';
+                    
+                    const response = await axios.post('https://malware-detect-server-1.onrender.com/checkPDF', malFormData);
+                    if (response.status === 200) {
+                        showRightBelowToast(`<p class="color-green">File is safe to upload.</p>`);
+                    } else if (response.status === 400) {
+                        showRightBelowToast(`<p class="color-red">${response.data.error}</p>`);
+                    }
+                } catch (error) {
+                    if (error.response) {
+                        showRightBelowToast(`<p class="color-red">${error.response.data.error}</p>`);
+                    } 
+                } finally {
+                    uploadButton.disabled = false;
+                    uploadButton.textContent = 'Upload';
+
+                    return;
                 }
-            } catch (error) {
-                if (error.response) {
-                    showRightBelowToast(`<p class="color-red">${error.response.data.error}</p>`);
-                } 
-            } finally {
-                uploadButton.disabled = false;
-                uploadButton.textContent = 'Upload';
             }
             
             uploadFile(file, password, randomServer.random, has_password, is_public);
