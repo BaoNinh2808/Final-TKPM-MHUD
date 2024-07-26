@@ -201,7 +201,6 @@ exports.handleLogin = async (req, res) => {
         return res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
-        // return res.redirect('/login');
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
@@ -287,7 +286,8 @@ function haversine(lat1, lon1, lat2, lon2) {
 
 exports.resendPIN = async (req, res) => {
     try {
-        const userId = req.session.userId;
+        const user = req.session.user;
+        const userId = user.id;
         if (!userId) {
             return res.status(400).json({ error: 'User ID not found in session' });
         }
@@ -301,7 +301,6 @@ exports.resendPIN = async (req, res) => {
             createdAt: new Date(),
         });
 
-        const user = await User.findByPk(userId);
 
         const mailOptions = {
             from: 'huymasterpiece@gmail.com',
