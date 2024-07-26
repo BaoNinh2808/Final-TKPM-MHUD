@@ -154,7 +154,7 @@ app.get('/register', (req, res) => {
     res.render('register',{layout: false});
 });
 
-app.get('/OTP', (req, res) => {
+app.get('/otp', (req, res) => {
     res.render('OTP',{layout: false});
 });
 
