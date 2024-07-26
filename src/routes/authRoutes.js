@@ -9,5 +9,6 @@ router.post('/register', authController.handleRegister);
 router.post('/auth/verify', authController.verifyPIN);
 router.post('/auth/resend', authController.resendPIN);
 router.post('/logout', authController.logout);
+router.get('/OTP', authController.renderOTPPage);
 
 module.exports = router;
