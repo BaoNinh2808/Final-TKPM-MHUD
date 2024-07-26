@@ -128,33 +128,6 @@ controller.getAnonymousUpload = async (req, res) => {
     });
 }
 
-function loadMimeTypes() {
-    fsSync.readFile('./src/config/mimeTypes.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error loading mime types:', err);
-            return;
-        }
-
-        try {
-            const mimeTypes = JSON.parse(data);
-            const extensionToMimeType = mimeTypes.acceptType;
-            return extensionToMimeType;
-        } catch (jsonError) {
-            console.error('Error parsing JSON:', jsonError);
-        }
-    });
-}
-
-const extensionToMimeType = loadMimeTypes();
-
-// Function to get MIME type from file extension
-function getMimeType(extension) {
-    if (!extensionToMimeType) {
-        extensionToMimeType = loadMimeTypes();
-    }
-    return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
-}
-
 
 controller.upload = upload.single('file');
 

@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const fileName = this.dataset.fileName;
 
             const link = `https://peach-necessary-quail-650.mypinata.cloud/ipfs/${cid}`;
+            console.log("link", link);
+            console.log("cid", cid);
             // download the file from this link to local
             downFn(link, fileName, cid);
         });

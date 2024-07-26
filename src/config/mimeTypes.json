@@ -1,6 +1,6 @@
 {
     "acceptType" : {
-        "png" : "image/jpeg",
+        "png" : "image/png",
         "jpg" : "image/jpeg",
         "jpeg" : "image/jpeg",
         "pdf" : "application/pdf",
@@ -12,7 +12,7 @@
         "mp4" : "video/mp4"
     },
     "storageType" :{
-        "png" : "image/jpeg",
+        "png" : "image/png",
         "jpg" : "image/jpeg",
         "jpeg" : "image/jpeg",
         "pdf" : "application/pdf",

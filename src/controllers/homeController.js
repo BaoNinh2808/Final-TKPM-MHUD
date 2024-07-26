@@ -14,10 +14,33 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // specify your upload directory
 const path = require('path');
 
+async function loadMimeTypes() {
+    try {
+        console.log("mimetype");
+        const data = await fs.readFile('./src/config/mimeTypes.json', 'utf8');
+        const mimeTypes = JSON.parse(data);
+        return mimeTypes.acceptType;
+    } catch (err) {
+        console.error('Error loading mime types:', err);
+    }
+}
+
+// Function to get MIME type from file extension
+async function getMimeType(extension) {
+    try {
+        const extensionToMimeType = await loadMimeTypes();
+        // console.log(extensionToMimeType);
+        return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
+    } catch (err) {
+        console.error('Error getting MIME type:', err);
+        return 'application/octet-stream'; // Default MIME type in case of error
+    }
+}
+
 controller.getHomePage = async (req, res) => {
     try {
-
         let {type, public, date} = req.query;
+
         const user_id = req.cookies.userID;
         //get all documents of user
         let documents = await db.Document.findAll({
@@ -36,7 +59,8 @@ controller.getHomePage = async (req, res) => {
 
         let file_format = null;
         if (type){
-            file_format = getMimeType(type);
+            file_format = await getMimeType(type);
+            console.log("file format", file_format);
         }
 
         let date_range = null;
@@ -71,32 +95,7 @@ controller.getHomePage = async (req, res) => {
     }
 }
 
-function loadMimeTypes() {
-    fsSync.readFile('./src/config/mimeTypes.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error loading mime types:', err);
-            return;
-        }
 
-        try {
-            const mimeTypes = JSON.parse(data);
-            const extensionToMimeType = mimeTypes.acceptType;
-            return extensionToMimeType;
-        } catch (jsonError) {
-            console.error('Error parsing JSON:', jsonError);
-        }
-    });
-}
-
-const extensionToMimeType = loadMimeTypes();
-
-// Function to get MIME type from file extension
-function getMimeType(extension) {
-    if (!extensionToMimeType) {
-        extensionToMimeType = loadMimeTypes();
-    }
-    return extensionToMimeType[extension] || 'application/octet-stream'; // Default MIME type
-}
 
 
 controller.getMimeTypes = async (req, res) => {
@@ -308,12 +307,10 @@ controller.deleteFile = async (req, res) => {
 controller.getFileInfo = async (req, res) => {
     const fileName = req.body.fileName;
     const cid = req.body.cid;
-    const user_id = req.cookies.userID;
     //check if file exists in database
     const document = await db.Document.findOne({
         where: {
             name: fileName,
-            user_id: user_id,
             CID: cid
         }
     });
