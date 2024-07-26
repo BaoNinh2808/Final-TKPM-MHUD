@@ -133,6 +133,9 @@ uploadButton.addEventListener('click', async () => {
 
     const file = files[fileIndex];
 
+    const malFormData = new FormData();
+    malFormData.append('pdf', file);
+
     console.log("upload", file);
 
     const passwordInput = document.getElementById('passwordInput');
@@ -187,6 +190,31 @@ uploadButton.addEventListener('click', async () => {
                 showRightBelowToast(`<p class="color-red">Invalid server random signature!</p>`);
                 return;
             }
+            // check file is pdf or not
+            if (file.type === 'application/pdf') {
+                
+                try {
+                    uploadButton.disabled = true;
+                    uploadButton.textContent = 'Checking...';
+                    
+                    const response = await axios.post('https://malware-detect-server-1.onrender.com/checkPDF', malFormData);
+                    if (response.status === 200) {
+                        showRightBelowToast(`<p class="color-green">File is safe to upload.</p>`);
+                    } else if (response.status === 400) {
+                        showRightBelowToast(`<p class="color-red">${response.data.error}</p>`);
+                        return;
+                    }
+                } catch (error) {
+                    if (error.response) {
+                        showRightBelowToast(`<p class="color-red">${error.response.data.error}</p>`);
+                        return;
+                    } 
+                } finally {
+                    uploadButton.disabled = false;
+                    uploadButton.textContent = 'Upload';
+                }
+            }
+            
             uploadFile(file, password, randomServer.random, has_password, is_public);
         }
         else {
@@ -201,6 +229,7 @@ async function uploadFile(file, password, randomServer, has_password, is_public)
 
     try {
         const formData = new FormData();
+        
         //if private --> encrypt the file
         if (!is_public){
             // Disable the upload button
